@@ -32,22 +32,27 @@ contract AgentRegistryV2 is Ownable2Step {
 
     IStakingView public staking;
     address public feeTreasury;
+    /// @notice dispute module allowed to record upheld disputes
+    address public disputeModule;
     uint256 public registrationFee = 0.0005 ether; // ~$2; can be zero during bootstrap
 
     uint256 public nextAgentId = 1;
     mapping(uint256 => Agent) public agents;
     mapping(uint256 => mapping(bytes32 => uint64)) public selfLogged;   // receiptHash => timestamp
     mapping(uint256 => mapping(bytes32 => address)) public attestor;    // receiptHash => validator
+    mapping(uint256 => mapping(bytes32 => uint64)) public attestedAt;   // receiptHash => attestation timestamp
 
     event AgentRegistered(uint256 indexed agentId, address indexed principal, bytes32 metadataHash);
     event AgentDeactivated(uint256 indexed agentId);
     event ReceiptLogged(uint256 indexed agentId, bytes32 indexed receiptHash);
     event ReceiptAttested(uint256 indexed agentId, bytes32 indexed receiptHash, address indexed validator);
+    event DisputeRecorded(uint256 indexed agentId);
 
     error WrongFee();
     error NotPrincipal();
     error AlreadyExists();
     error NotActiveValidator();
+    error NotDisputeModule();
 
     constructor(address _feeTreasury) Ownable(msg.sender) {
         feeTreasury = _feeTreasury;
@@ -55,6 +60,7 @@ contract AgentRegistryV2 is Ownable2Step {
 
     function setStaking(IStakingView s) external onlyOwner { staking = s; }
     function setRegistrationFee(uint256 f) external onlyOwner { registrationFee = f; }
+    function setDisputeModule(address d) external onlyOwner { disputeModule = d; }
 
     /// @notice Register an agent. Pays in native ETH — no token needed.
     function registerAgent(bytes32 metadataHash) external payable returns (uint256 agentId) {
@@ -90,8 +96,17 @@ contract AgentRegistryV2 is Ownable2Step {
         if (!active) revert NotActiveValidator();
         if (attestor[agentId][receiptHash] != address(0)) revert AlreadyExists();
         attestor[agentId][receiptHash] = msg.sender;
+        attestedAt[agentId][receiptHash] = uint64(block.timestamp);
         agents[agentId].attestedReceipts++;
         emit ReceiptAttested(agentId, receiptHash, msg.sender);
+    }
+
+    /// @notice Record an upheld dispute against an agent. Only callable by
+    ///         the dispute module after an arbiter upholds a challenge.
+    function recordDispute(uint256 agentId) external {
+        if (msg.sender != disputeModule) revert NotDisputeModule();
+        agents[agentId].disputes++;
+        emit DisputeRecorded(agentId);
     }
 
     /// @notice On-chain reputation floor: attested minus weighted disputes.
