@@ -57,6 +57,23 @@ interface IEmissionSchedule {
 ///         should claim before changing their delegation. A future revision
 ///         should checkpoint delegations on every stake change (MasterChef-
 ///         style reward-per-share fed by Staking hooks).
+///
+///         !! AUDIT-PREP NOTE (delegator snapshot timing) !! Because the
+///         per-validator snapshot is taken at FIRST claim and each delegator's
+///         weight is read live, a delegator can grief-adjacent siphon: delegate
+///         just before an epoch's first claim, claim, then immediately
+///         undelegate — capturing rewards economically earned by longer-term
+///         delegators. The per-bucket cap makes this a REDISTRIBUTION among
+///         delegators, never an over-payment or fund drain (the core invariant
+///         still holds), but auditors should look specifically at this
+///         claim-vs-delegation-change ordering. Fixed properly by the
+///         reward-per-share checkpoint revision above.
+///
+///         !! UX NOTE (zero-yield honest validators) !! Delegators of a
+///         validator that attested nothing in an epoch earn nothing that epoch.
+///         An honest-but-quiet validator (no receipts to attest) therefore
+///         shows zero delegator yield — surface this clearly in SDK/user docs
+///         so it is not mistaken for a bug.
 contract RewardDistributor is Ownable2Step, ReentrancyGuard {
     uint256 public constant VALIDATOR_BPS = 6000; // of total epoch emission
     uint256 public constant DELEGATOR_BPS = 3000; // of total epoch emission

@@ -16,3 +16,10 @@ fuzz = { runs = 1024 }
 
 [fmt]
 line_length = 100
+
+[rpc_endpoints]
+base_sepolia = "${BASE_SEPOLIA_RPC_URL}"
+
+[etherscan]
+# Basescan (Etherscan v2). chainid 84532 = Base Sepolia.
+base_sepolia = { key = "${BASESCAN_API_KEY}", chain = 84532, url = "https://api-sepolia.basescan.org/api" }
