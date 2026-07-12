@@ -7,6 +7,10 @@ interface IStakingView {
     function validators(address) external view returns (uint256, uint256, bool, uint16);
 }
 
+interface IAttestationSink {
+    function recordAttestation(address validator) external;
+}
+
 /// @title AgentRegistryV2 — adoption-first revision
 /// @notice Changes vs v1 (driven by SDK/DX review):
 ///         1. Fees in native ETH (no token purchase required to onboard).
@@ -34,6 +38,8 @@ contract AgentRegistryV2 is Ownable2Step {
     address public feeTreasury;
     /// @notice dispute module allowed to record upheld disputes
     address public disputeModule;
+    /// @notice reward distributor notified of per-validator attestation work
+    IAttestationSink public rewardDistributor;
     uint256 public registrationFee = 0.0005 ether; // ~$2; can be zero during bootstrap
 
     uint256 public nextAgentId = 1;
@@ -61,6 +67,7 @@ contract AgentRegistryV2 is Ownable2Step {
     function setStaking(IStakingView s) external onlyOwner { staking = s; }
     function setRegistrationFee(uint256 f) external onlyOwner { registrationFee = f; }
     function setDisputeModule(address d) external onlyOwner { disputeModule = d; }
+    function setRewardDistributor(IAttestationSink d) external onlyOwner { rewardDistributor = d; }
 
     /// @notice Register an agent. Pays in native ETH — no token needed.
     function registerAgent(bytes32 metadataHash) external payable returns (uint256 agentId) {
@@ -98,6 +105,10 @@ contract AgentRegistryV2 is Ownable2Step {
         attestor[agentId][receiptHash] = msg.sender;
         attestedAt[agentId][receiptHash] = uint64(block.timestamp);
         agents[agentId].attestedReceipts++;
+        // report work to the reward distributor (per-validator, per-epoch)
+        if (address(rewardDistributor) != address(0)) {
+            rewardDistributor.recordAttestation(msg.sender);
+        }
         emit ReceiptAttested(agentId, receiptHash, msg.sender);
     }
 

@@ -28,6 +28,13 @@ import {Staking} from "./Staking.sol";
 ///         milestone — e.g. a bonded validator vote, an optimistic
 ///         challenge-escalation game, or a Kleros-style court.
 ///
+///         ROADMAP NOTE (tied to the above): `disputeOf` enforces ONE
+///         challenge per receipt, EVER — so an arbiter that wrongly (or
+///         corruptly) rejects a legitimate challenge permanently immunizes
+///         that attestation. Acceptable only while the arbiter is a trusted
+///         multisig. When resolution is decentralized, add an appeal path
+///         that permits re-challenging a rejected dispute.
+///
 ///         Wiring requirements:
 ///         - Staking.setSlasher(address(this))            (to slash)
 ///         - AgentRegistryV2.setDisputeModule(address(this)) (to record disputes)
