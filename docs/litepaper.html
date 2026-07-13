@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Litepaper — Agent Trust Protocol</title>
+<meta name="description" content="Verifiable Reputation for AI Trading Agents — with ZK Private Performance Passports. Litepaper v0.9.">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="litepaper.css">
+</head>
+<body>
+
+<header class="lp-header">
+  <div class="wrap lp-header-inner">
+    <a class="lp-back" href="./index.html">&larr; Agent Trust Protocol</a>
+    <a class="lp-source" href="https://github.com/Rsmac93/agent-trust-protocol/blob/master/docs/LITEPAPER.md">View source on GitHub</a>
+  </div>
+</header>
+
+<article class="wrap lp-article">
+
+  <div class="lp-title-block">
+    <h1>Agent Trust Protocol</h1>
+    <p class="lp-subtitle">Verifiable Reputation for AI Trading Agents — with ZK Private Performance Passports</p>
+    <p class="lp-meta"><strong>Litepaper v0.9 (draft) &mdash; July 2026</strong><br>
+      <a href="https://github.com/Rsmac93/agent-trust-protocol">github.com/Rsmac93/agent-trust-protocol</a> &middot;
+      npm: <a href="https://www.npmjs.com/package/agent-trust-protocol-sdk">agent-trust-protocol-sdk</a></p>
+  </div>
+
+  <hr>
+
+  <h2>Abstract</h2>
+  <p>AI agents are beginning to control real capital. They trade on decentralized exchanges, manage vault strategies, and transact with each other through machine-native payment rails. But there is no trustworthy way to answer the question that matters before capital is allocated: <em>should you trust this agent with your money?</em></p>
+  <p>Agent Trust Protocol is an on-chain trust layer for AI agents, built first for the vertical where trust is most existential: autonomous trading. It combines three primitives &mdash; <strong>identity</strong> (a registry of agents bound to accountable principals), <strong>verifiable action receipts</strong> (cryptographically notarized records of what an agent actually did, attested by economically-staked validators), and <strong>ZK Performance Passports</strong> (zero-knowledge proofs that let an agent demonstrate profitability, risk compliance, and execution integrity <em>without revealing its strategy</em>).</p>
+  <p>The core dilemma the protocol resolves is one no existing system addresses: today, a trading agent can prove its performance only by revealing its trades &mdash; destroying the alpha that made it valuable &mdash; or protect its strategy and remain unverifiable. Identity registries prove <em>who</em> an agent is; ZK leaderboards prove <em>rankings</em>; nothing proves the specific, private claims capital allocators actually require. Agent Trust Protocol closes that gap.</p>
+  <p>The protocol is live as an open-source implementation with a complete test suite, a published TypeScript SDK, and a working end-to-end demonstration.</p>
+
+  <hr>
+
+  <h2>1. The Problem: Unbanked Ghosts with Trading Keys</h2>
+  <p>In financial services, non-human identities already outnumber human employees by roughly 96 to 1 &mdash; yet these identities remain, in the words of Circle cofounder Sean Neville, &ldquo;unbanked ghosts.&rdquo; a16z crypto identifies the missing primitive directly: <strong>Know Your Agent (KYA)</strong>. There is still no broadly adopted, interoperable way for one agent to prove to another who it represents, what it is allowed to do, and how it gets paid.</p>
+  <p>The problem is sharpest where agents touch capital:</p>
+  <ul>
+    <li><strong>Copy-trading platforms and vaults</strong> cannot verify an agent's claimed track record. Screenshots are forged; backtests are cherry-picked; even live records can be fabricated by parties controlling their own reporting.</li>
+    <li><strong>Agent developers with genuine edge face an impossible choice</strong>: prove performance by revealing trades (and burn the alpha that makes the strategy valuable), or keep the strategy private and remain unverifiable.</li>
+    <li><strong>Retail users choosing among AI trading agents</strong> have nothing but marketing to go on. The result is a market where the loudest agent wins, not the best one.</li>
+    <li><strong>Agent-to-agent commerce</strong> (now processing over 100M transactions via protocols like x402) has payment rails but no trust rails: an agent can pay another agent, but cannot verify the counterparty is competent or honest.</li>
+  </ul>
+
+  <h3>1.1 What exists, and what each one cannot answer</h3>
+  <div class="lp-table-wrap">
+    <table>
+      <thead>
+        <tr><th>Approach</th><th>What it proves</th><th>What it cannot answer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Identity standards (ERC-8004 et al.)</td><td><em>Who</em> an agent is, who it represents</td><td>Whether any of its performance claims are true</td></tr>
+        <tr><td>ZK leaderboards / verified rankings</td><td>Relative ranking on a scoreboard</td><td>The specific due-diligence claims an allocator needs: absolute returns, drawdown limits, execution consistency</td></tr>
+        <tr><td>Transparent on-chain track records</td><td>Full history, publicly</td><td>Nothing privately &mdash; full transparency leaks the strategy, so agents with real alpha refuse to use them</td></tr>
+        <tr><td>Platform-internal ratings (per-vault, per-app)</td><td>Reputation inside one walled garden</td><td>Anything portable &mdash; the record dies when the agent leaves the platform</td></tr>
+        <tr><td>Verifiable inference (zkML/TEE)</td><td>That a specific model computation ran</td><td>Whether the agent's <em>trading history and results</em> are what it claims &mdash; and remains too slow/costly for per-trade use</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Each of these solves a fragment. <strong>None of them lets an agent prove &ldquo;I returned X%, never exceeded Y% drawdown, and executed exactly the strategy I claimed&rdquo; without revealing a single trade</strong> &mdash; the one statement that unlocks capital allocation while preserving the strategy's value.</p>
+  <p>That combination &mdash; identity + economically-secured tamper-evident history + private performance proofs, packaged for one vertical with a three-line integration &mdash; is the gap this protocol fills.</p>
+
+  <h2>2. The Solution: Three Layers of Trust</h2>
+
+  <h3>2.1 Identity &mdash; the Registry</h3>
+  <p>Every agent registers on-chain with a stable <code>agentId</code>, bound to an accountable principal (the human or entity legally behind it) and a hash of its agent card (model, capabilities, endpoints). Registration costs a small fee in native ETH &mdash; deliberately <strong>no protocol token is required to onboard</strong>, removing the single largest friction for Web2 agent developers.</p>
+
+  <h3>2.2 Verifiable Receipts &mdash; two lanes</h3>
+  <p>Agents notarize their actions as <strong>receipts</strong>: canonical hashes of action records (a trade, an API call, a payment) committed on-chain with timestamps.</p>
+  <ul>
+    <li><strong>Self-reported lane</strong> (<code>logReceipt</code>): free, permissionless, works from day one with zero validators live. Establishes tamper-evident history &mdash; the agent cannot retroactively rewrite what it claimed to do.</li>
+    <li><strong>Attested lane</strong> (<code>attestReceipt</code>): staked validators attest <em>objectively verifiable facts only</em> &mdash; this signed record existed at time T, this transaction settled, this response matched this hash. Attestations feed reputation. Subjective quality judgments are deliberately excluded from the slashing surface: validators attest facts, not opinions.</li>
+  </ul>
+  <p>A dispute module allows anyone to challenge an attestation within a 7-day window by posting a deposit. Upheld challenges slash the attesting validator 20% of bonded stake &mdash; half burned, half to the challenger &mdash; and mark the agent's record. The economic design makes false attestation an expected-loss strategy and watchdogging a paid role.</p>
+
+  <h3>2.3 ZK Performance Passports &mdash; prove it without revealing it</h3>
+  <p>The differentiating layer. An agent accumulates a private ledger of receipts; the Passport lets it prove claims <em>about</em> that ledger without revealing its contents. Three claims, chosen because they map exactly to what a vault, copy-trading platform, or allocator requires before listing an agent:</p>
+  <ol>
+    <li><strong>Profit Proof</strong> &mdash; &ldquo;this agent achieved X% return over period Y&rdquo; &mdash; proven against the committed receipt history, without revealing a single position, entry, or exit.</li>
+    <li><strong>Risk Compliance Proof</strong> &mdash; &ldquo;maximum drawdown never exceeded Z%; position sizing stayed within stated limits&rdquo; &mdash; the institutional due-diligence question, answered cryptographically.</li>
+    <li><strong>Execution Integrity Proof</strong> &mdash; &ldquo;N trades were executed consistent with the strategy's stated parameters&rdquo; &mdash; proving the agent did what it said, distinguishing skill from luck and honesty from fabrication.</li>
+  </ol>
+  <p>Because receipts are hash-committed on-chain <em>as they happen</em>, the proofs are anchored to a history the agent could not have rewritten. Because validators economically attest the data pipeline, &ldquo;garbage in&rdquo; carries a slashing cost. ZK proofs alone verify computation over data; staking secures the data; together they produce something neither achieves alone: <strong>verifiable performance claims over private, tamper-evident history.</strong></p>
+  <p>The passport is portable. An agent's proven track record follows it across every platform that reads the registry &mdash; reputation stops being a walled-garden asset owned by whichever platform the agent launched on.</p>
+
+  <h3>2.4 How it works &mdash; end to end</h3>
+  <div class="lp-diagram">
+    <pre class="mermaid">
+flowchart LR
+    A[Agent registers<br/>identity on-chain] --> B[Agent trades<br/>privately]
+    B --> C[Each action hashed +<br/>logged as receipt<br/>tamper-evident, private]
+    C --> D[Staked validators attest<br/>objective facts<br/>skin in the game]
+    D --> E[Agent generates ZK proof<br/>over its receipt history]
+    E --> F[Passport: verified claims<br/>profit / drawdown / integrity]
+    F --> G[Vaults & platforms check<br/>passport before allocating]
+    D -.->|false attestation| H[Challenged & slashed<br/>-20% bond]
+    </pre>
+  </div>
+
+  <div class="lp-diagram">
+    <pre class="mermaid">
+flowchart TD
+    subgraph PRIVATE ["Stays private"]
+        T1[Trade entries & exits]
+        T2[Position sizes]
+        T3[Strategy logic]
+    end
+    subgraph PUBLIC ["Goes on-chain"]
+        R[Receipt hashes + timestamps]
+        P[ZK proof: returned 34%,<br/>max drawdown 4.2%,<br/>127 trades per stated strategy]
+    end
+    T1 --> R
+    T2 --> R
+    T3 -.never leaves the agent.-> X[" "]
+    R --> P
+    style X fill:none,stroke:none
+    </pre>
+  </div>
+
+  <h3>2.5 A concrete example</h3>
+  <p><strong>Meet VoltBot</strong>, an AI trading agent with a genuinely profitable ETH momentum strategy.</p>
+  <p><em>Today, without the protocol:</em> VoltBot's developer wants to be listed on a copy-trading vault. The vault asks for a track record. The developer can screenshot a dashboard (unverifiable, routinely forged), share the wallet (revealing every entry, exit, and sizing rule &mdash; the strategy is cloned within a week), or be rejected. Most quality agents choose obscurity; the vault lists whoever markets loudest.</p>
+  <p><em>With the protocol:</em> VoltBot registered six months ago (<code>agentId 4217</code>, three lines of TypeScript). Every trade decision has been hashed and logged the moment it happened &mdash; 1,283 receipts, timestamps immutable, contents private. Staked validators have attested the objective facts along the way. Monthly, VoltBot publishes a ZK proof to its passport: <strong>+34% over 6 months, max drawdown 4.2%, 100% of trades within stated strategy parameters</strong> &mdash; proven against the committed history it could not have rewritten, revealing none of it.</p>
+  <p>The vault reads the passport in one contract call, verifies the proofs, and lists VoltBot with a &ldquo;cryptographically verified&rdquo; badge. A retail user comparing agents sees the difference between <em>proven</em> and <em>claimed</em>. VoltBot's developer never exposed a single trade. If VoltBot later moves to a different platform, the passport moves with it.</p>
+  <p>That is the product: <strong>the track record becomes an asset the agent owns, instead of a secret it must either leak or waste.</strong></p>
+
+  <h2>3. Architecture</h2>
+  <p>Seven contracts, deployed and wired (Base; EVM-portable):</p>
+  <div class="lp-table-wrap">
+    <table>
+      <thead>
+        <tr><th>Contract</th><th>Role</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>AgentRegistryV2</td><td>Identity, both receipt lanes, reputation floor</td></tr>
+        <tr><td>Staking</td><td>Validator bonding (min 1,000 AGT), delegation, 21-day unbonding, slashing &mdash; including slashing of stake in the unbonding queue (evasion-proofed)</td></tr>
+        <tr><td>DisputeModule</td><td>Permissionless challenges, deposits, arbiter resolution (v1 multisig; decentralization roadmap documented)</td></tr>
+        <tr><td>RewardDistributor</td><td>Work-weighted validator rewards (by attestations, not raw stake), delegator pro-rata, commission</td></tr>
+        <tr><td>Emission</td><td>Fixed-supply drip, 4-year halvings, permissionless crank</td></tr>
+        <tr><td>AGTToken</td><td>21M hard cap ERC-20; minting locked to Emission</td></tr>
+        <tr><td>TeamVesting</td><td>4-year linear, 1-year cliff</td></tr>
+        <tr><td><em>PerformancePassport</em></td><td><em>(next module)</em> stores verified ZK claims per agent per epoch</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Status: 81-test Foundry suite passing, including 1024-run fuzz invariants on emission caps, unbonding accounting, and reward conservation. One design-level vulnerability (slash evasion via the unbonding queue) was identified and fixed during development, with tests proving evasion-neutrality. <strong>The protocol is unaudited and testnet-only; audit precedes any mainnet deployment.</strong></p>
+
+  <h2>4. Token Design</h2>
+  <p>AGT exists to secure the protocol &mdash; deliberately <strong>not</strong> to tax its users.</p>
+  <ul>
+    <li><strong>Fixed supply: 21,000,000.</strong> No inflation, ever.</li>
+    <li><strong>Premine: 10%</strong> &mdash; 5% team (4-year vest, 1-year cliff), 4% treasury (multisig, transparent), 1% audits + liquidity. No investor allocation at genesis.</li>
+    <li><strong>90% emitted</strong> to network participants over daily epochs with 4-year halvings: 60% to validators weighted by attestation work performed, 30% to delegators, 10% to builder incentives.</li>
+    <li><strong>Demand side pays in ETH/stablecoins.</strong> Agent developers never need to touch AGT. The token is validator collateral: bonded to earn attestation rights, slashed for dishonesty. Its value is a function of the security the network must provide &mdash; the more capital relies on attestations, the more collateral honesty requires.</li>
+  </ul>
+
+  <h2>5. Go-to-Market: One Vertical, Then the Standard</h2>
+  <p>The protocol launches narrow: <strong>AI trading agents on Base</strong>, where agents already live on-chain, trust is existential rather than theoretical, and concrete buyers exist today &mdash; copy-trading platforms and vaults that must answer to depositors.</p>
+  <p>Sequence: (1) SDK adoption by trading-agent builders &mdash; the integration is three lines of TypeScript; (2) passport consumption by the platforms that list those agents; (3) validator network expansion as attested volume grows; (4) horizontal expansion to adjacent verticals (payment agents on x402 rails, data agents, service agents) and additional chains &mdash; the contracts are EVM-portable by construction, with AI-native chains as natural second deployments.</p>
+  <p>Alignment over competition: the registry is designed to interoperate with emerging identity standards (ERC-8004 et al.) rather than replace them. If a standard wins the base layer, the protocol's value concentrates in what standards do not provide: economic security, private performance proofs, and developer experience.</p>
+
+  <h2>6. Roadmap</h2>
+  <div class="lp-table-wrap">
+    <table>
+      <thead>
+        <tr><th>Phase</th><th>Milestones</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Now</td><td>Open-source release &#x2705; &middot; SDK on npm &#x2705; &middot; full local deployment + demo &#x2705;</td></tr>
+        <tr><td>Next 90 days</td><td>Public testnet deployment &middot; Passport contract + stub verifier &middot; ZK claim schemas finalized &middot; first 5&ndash;10 trading-agent integrations &middot; Base ecosystem grant</td></tr>
+        <tr><td>6 months</td><td>ZK circuits for the three claims (Noir/SP1) &middot; security audit &middot; incentivized validator testnet &middot; public reputation explorer</td></tr>
+        <tr><td>9&ndash;12 months</td><td>Mainnet &middot; token genesis event (post-legal-review) &middot; passport adoption by first listing platforms</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>7. Risks, Stated Plainly</h2>
+  <ul>
+    <li><strong>ZK proving costs for complex claims remain high</strong>; the protocol sequences accordingly &mdash; commitment schemes and stub verifiers first, full circuits as tooling matures (proving costs have fallen consistently; the claims chosen are far simpler than full model inference).</li>
+    <li><strong>The arbiter is centralized in v1</strong> (documented, with an escalation roadmap toward validator voting or court systems).</li>
+    <li><strong>Standards risk</strong>: a competing identity standard could win the base registry layer &mdash; mitigated by interoperability-first design.</li>
+    <li><strong>Regulatory</strong>: token launch occurs only after legal review; the token's validator-collateral design (never a user-facing payment requirement) is deliberate.</li>
+    <li><strong>Adoption risk is the honest largest risk</strong>, as for all protocols. The mitigation is the niche strategy: a small number of deep integrations in one vertical, not a broad shallow launch.</li>
+  </ul>
+
+  <h2>8. Conclusion</h2>
+  <p>The agent economy has payment rails, compute markets, and identity drafts. It does not yet have the layer that lets capital trust code: proven identity, economically-secured history, and private performance verification, delivered simply enough that developers actually integrate it. That layer is buildable now &mdash; most of it already is built, in public.</p>
+  <p class="lp-tagline">Prove performance. Protect alpha. Port reputation.</p>
+
+  <hr>
+
+  <p class="lp-disclaimer"><em>This document describes experimental, unaudited software and is not an offer of securities or investment advice. Nothing here promises returns of any kind.</em></p>
+
+</article>
+
+<footer>
+  <div class="wrap">
+    <p>Agent Trust Protocol &middot; MIT licensed &middot; <a href="https://github.com/Rsmac93/agent-trust-protocol/blob/master/SECURITY.md">Security notes</a></p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#0a0e27',
+      primaryColor: '#0d1230',
+      primaryTextColor: '#f5f5f5',
+      primaryBorderColor: '#00d4ff',
+      lineColor: '#00d4ff',
+      secondaryColor: '#0d1230',
+      tertiaryColor: '#0d1230',
+      fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif'
+    },
+    flowchart: { curve: 'basis' }
+  });
+</script>
+</body>
+</html>
