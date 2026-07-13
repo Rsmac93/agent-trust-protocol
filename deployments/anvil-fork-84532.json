@@ -1,0 +1,13 @@
+{
+  "network": "anvil fork of Base Sepolia (local, chainId 84532)",
+  "rpc": "http://127.0.0.1:8545",
+  "deployer": "0xFCc7B8Ec8ce431c85a91Fe83d8b0B2a54Faeb710",
+  "AGTToken": "0x6A53a18Ca136D829ffFF3f8eAFCF4c108D834E05",
+  "TeamVesting": "0x6c3008bCb4767CF11B3B79bb5203A8B678cf7d5F",
+  "Staking": "0x3E6c4306A6E25B47206b80E1ee277FE072c1280F",
+  "AgentRegistryV2": "0x1d38285211953b61799AAA4Ad7221ED638AbA751",
+  "RewardDistributor": "0xbe3937E04B0605681942480f9FdD61d102F7A5dd",
+  "Emission": "0xe5342dbd7EC3ba82E107c3090ddad9328e7B5Fc3",
+  "DisputeModule": "0x99eF4DD96fcCddb1A7659EdD9816Bd75F3AA253A",
+  "note": "Fork-local addresses — valid only while this Anvil instance lives. Do NOT bake into SDK as network defaults; real Base Sepolia deploy will replace these."
+}

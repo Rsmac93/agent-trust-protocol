@@ -3,3 +3,6 @@ cache/
 broadcast/
 lib/
 .env
+node_modules/
+sdk/node_modules/
+demo/node_modules/

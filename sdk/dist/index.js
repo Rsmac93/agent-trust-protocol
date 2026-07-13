@@ -62,6 +62,25 @@ export class AgentTrust {
         await this.pub.waitForTransactionReceipt({ hash: txHash });
         return { receiptHash, txHash };
     }
+    /** Validator-attested receipt (validator-lane wallet only). The caller's
+     *  wallet must be an active validator on the Staking contract wired to this
+     *  registry, or the tx reverts with NotActiveValidator. Attested receipts
+     *  (unlike self-reports) feed reputation() and validator work rewards. */
+    async attestReceipt(agentId, receiptHash) {
+        const txHash = await this.wallet.writeContract({
+            address: this.registry, abi: REGISTRY_ABI, functionName: 'attestReceipt',
+            args: [BigInt(agentId), receiptHash], account: this.account, chain: this.wallet.chain,
+        });
+        await this.pub.waitForTransactionReceipt({ hash: txHash });
+        return { txHash };
+    }
+    /** Who (if anyone) attested a given receipt hash for this agent. */
+    async getAttestor(agentId, receiptHash) {
+        return this.pub.readContract({
+            address: this.registry, abi: REGISTRY_ABI, functionName: 'attestor',
+            args: [BigInt(agentId), receiptHash],
+        });
+    }
     /** Full agent profile + reputation. Read-only; no key needed. */
     async getAgent(agentId) {
         const id = BigInt(agentId);

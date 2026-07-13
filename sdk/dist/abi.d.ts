@@ -83,6 +83,33 @@ export declare const REGISTRY_ABI: readonly [{
     }];
     readonly outputs: readonly [];
 }, {
+    readonly type: "function";
+    readonly name: "attestReceipt";
+    readonly stateMutability: "nonpayable";
+    readonly inputs: readonly [{
+        readonly name: "agentId";
+        readonly type: "uint256";
+    }, {
+        readonly name: "receiptHash";
+        readonly type: "bytes32";
+    }];
+    readonly outputs: readonly [];
+}, {
+    readonly type: "function";
+    readonly name: "attestor";
+    readonly stateMutability: "view";
+    readonly inputs: readonly [{
+        readonly name: "";
+        readonly type: "uint256";
+    }, {
+        readonly name: "";
+        readonly type: "bytes32";
+    }];
+    readonly outputs: readonly [{
+        readonly name: "";
+        readonly type: "address";
+    }];
+}, {
     readonly type: "event";
     readonly name: "AgentRegistered";
     readonly inputs: readonly [{
@@ -108,6 +135,22 @@ export declare const REGISTRY_ABI: readonly [{
     }, {
         readonly name: "receiptHash";
         readonly type: "bytes32";
+        readonly indexed: true;
+    }];
+}, {
+    readonly type: "event";
+    readonly name: "ReceiptAttested";
+    readonly inputs: readonly [{
+        readonly name: "agentId";
+        readonly type: "uint256";
+        readonly indexed: true;
+    }, {
+        readonly name: "receiptHash";
+        readonly type: "bytes32";
+        readonly indexed: true;
+    }, {
+        readonly name: "validator";
+        readonly type: "address";
         readonly indexed: true;
     }];
 }];

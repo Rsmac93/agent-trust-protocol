@@ -40,6 +40,22 @@ export const REGISTRY_ABI = [
         inputs: [{ name: 'agentId', type: 'uint256' }], outputs: [],
     },
     {
+        type: 'function', name: 'attestReceipt', stateMutability: 'nonpayable',
+        inputs: [
+            { name: 'agentId', type: 'uint256' },
+            { name: 'receiptHash', type: 'bytes32' },
+        ],
+        outputs: [],
+    },
+    {
+        type: 'function', name: 'attestor', stateMutability: 'view',
+        inputs: [
+            { name: '', type: 'uint256' },
+            { name: '', type: 'bytes32' },
+        ],
+        outputs: [{ name: '', type: 'address' }],
+    },
+    {
         type: 'event', name: 'AgentRegistered',
         inputs: [
             { name: 'agentId', type: 'uint256', indexed: true },
@@ -52,6 +68,14 @@ export const REGISTRY_ABI = [
         inputs: [
             { name: 'agentId', type: 'uint256', indexed: true },
             { name: 'receiptHash', type: 'bytes32', indexed: true },
+        ],
+    },
+    {
+        type: 'event', name: 'ReceiptAttested',
+        inputs: [
+            { name: 'agentId', type: 'uint256', indexed: true },
+            { name: 'receiptHash', type: 'bytes32', indexed: true },
+            { name: 'validator', type: 'address', indexed: true },
         ],
     },
 ];

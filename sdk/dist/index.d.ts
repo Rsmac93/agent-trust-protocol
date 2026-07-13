@@ -58,6 +58,15 @@ export declare class AgentTrust {
         receiptHash: Hex;
         txHash: Hex;
     }>;
+    /** Validator-attested receipt (validator-lane wallet only). The caller's
+     *  wallet must be an active validator on the Staking contract wired to this
+     *  registry, or the tx reverts with NotActiveValidator. Attested receipts
+     *  (unlike self-reports) feed reputation() and validator work rewards. */
+    attestReceipt(agentId: bigint | number, receiptHash: Hex): Promise<{
+        txHash: Hex;
+    }>;
+    /** Who (if anyone) attested a given receipt hash for this agent. */
+    getAttestor(agentId: bigint | number, receiptHash: Hex): Promise<Address>;
     /** Full agent profile + reputation. Read-only; no key needed. */
     getAgent(agentId: bigint | number): Promise<AgentInfo>;
     /** Convenience: just the reputation score. */
