@@ -1,0 +1,29 @@
+{
+  "name": "voltpass-agentkit",
+  "version": "0.1.0",
+  "description": "AgentKit WalletProvider wrapper that auto-logs every fund-moving call as a VoltPass receipt — zero changes to existing trading logic.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "voltpass-sdk": "file:../sdk",
+    "viem": "^2.55.1"
+  },
+  "devDependencies": {
+    "@coinbase/agentkit": "^0.10.4",
+    "@types/node": "^26.1.1",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@coinbase/agentkit": "^0.10.4"
+  },
+  "license": "MIT"
+}
