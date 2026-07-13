@@ -79,4 +79,57 @@ export const REGISTRY_ABI = [
         ],
     },
 ];
+/// Minimal ABI for PerformancePassport — only what the SDK touches.
+export const PASSPORT_ABI = [
+    {
+        type: 'function', name: 'submitClaim', stateMutability: 'nonpayable',
+        inputs: [
+            { name: 'agentId', type: 'uint256' },
+            { name: 'epoch', type: 'uint32' },
+            { name: 'claimType', type: 'uint8' },
+            { name: 'claimData', type: 'uint256' },
+            { name: 'receiptHashRangeStart', type: 'bytes32' },
+            { name: 'receiptHashRangeEnd', type: 'bytes32' },
+            { name: 'proof', type: 'bytes' },
+        ],
+        outputs: [],
+    },
+    {
+        type: 'function', name: 'latestClaim', stateMutability: 'view',
+        inputs: [{ name: 'agentId', type: 'uint256' }],
+        outputs: [{ name: 'latestEpoch', type: 'uint32' }],
+    },
+    {
+        type: 'function', name: 'getLatestClaim', stateMutability: 'view',
+        inputs: [{ name: 'agentId', type: 'uint256' }],
+        outputs: [{
+                name: '', type: 'tuple',
+                components: [
+                    { name: 'agentId', type: 'uint256' },
+                    { name: 'epoch', type: 'uint32' },
+                    { name: 'claimType', type: 'uint8' },
+                    { name: 'claimData', type: 'uint256' },
+                    { name: 'receiptHashRangeStart', type: 'bytes32' },
+                    { name: 'receiptHashRangeEnd', type: 'bytes32' },
+                    { name: 'submittedAt', type: 'uint64' },
+                    { name: 'verifierSignature', type: 'bytes' },
+                ],
+            }],
+    },
+    {
+        type: 'event', name: 'ClaimSubmitted',
+        inputs: [
+            { name: 'agentId', type: 'uint256', indexed: true },
+            { name: 'epoch', type: 'uint32', indexed: true },
+            { name: 'claimType', type: 'uint8', indexed: false },
+        ],
+    },
+    {
+        type: 'event', name: 'ClaimVerified',
+        inputs: [
+            { name: 'agentId', type: 'uint256', indexed: true },
+            { name: 'epoch', type: 'uint32', indexed: true },
+        ],
+    },
+];
 //# sourceMappingURL=abi.js.map

@@ -154,4 +154,109 @@ export declare const REGISTRY_ABI: readonly [{
         readonly indexed: true;
     }];
 }];
+export declare const PASSPORT_ABI: readonly [{
+    readonly type: "function";
+    readonly name: "submitClaim";
+    readonly stateMutability: "nonpayable";
+    readonly inputs: readonly [{
+        readonly name: "agentId";
+        readonly type: "uint256";
+    }, {
+        readonly name: "epoch";
+        readonly type: "uint32";
+    }, {
+        readonly name: "claimType";
+        readonly type: "uint8";
+    }, {
+        readonly name: "claimData";
+        readonly type: "uint256";
+    }, {
+        readonly name: "receiptHashRangeStart";
+        readonly type: "bytes32";
+    }, {
+        readonly name: "receiptHashRangeEnd";
+        readonly type: "bytes32";
+    }, {
+        readonly name: "proof";
+        readonly type: "bytes";
+    }];
+    readonly outputs: readonly [];
+}, {
+    readonly type: "function";
+    readonly name: "latestClaim";
+    readonly stateMutability: "view";
+    readonly inputs: readonly [{
+        readonly name: "agentId";
+        readonly type: "uint256";
+    }];
+    readonly outputs: readonly [{
+        readonly name: "latestEpoch";
+        readonly type: "uint32";
+    }];
+}, {
+    readonly type: "function";
+    readonly name: "getLatestClaim";
+    readonly stateMutability: "view";
+    readonly inputs: readonly [{
+        readonly name: "agentId";
+        readonly type: "uint256";
+    }];
+    readonly outputs: readonly [{
+        readonly name: "";
+        readonly type: "tuple";
+        readonly components: readonly [{
+            readonly name: "agentId";
+            readonly type: "uint256";
+        }, {
+            readonly name: "epoch";
+            readonly type: "uint32";
+        }, {
+            readonly name: "claimType";
+            readonly type: "uint8";
+        }, {
+            readonly name: "claimData";
+            readonly type: "uint256";
+        }, {
+            readonly name: "receiptHashRangeStart";
+            readonly type: "bytes32";
+        }, {
+            readonly name: "receiptHashRangeEnd";
+            readonly type: "bytes32";
+        }, {
+            readonly name: "submittedAt";
+            readonly type: "uint64";
+        }, {
+            readonly name: "verifierSignature";
+            readonly type: "bytes";
+        }];
+    }];
+}, {
+    readonly type: "event";
+    readonly name: "ClaimSubmitted";
+    readonly inputs: readonly [{
+        readonly name: "agentId";
+        readonly type: "uint256";
+        readonly indexed: true;
+    }, {
+        readonly name: "epoch";
+        readonly type: "uint32";
+        readonly indexed: true;
+    }, {
+        readonly name: "claimType";
+        readonly type: "uint8";
+        readonly indexed: false;
+    }];
+}, {
+    readonly type: "event";
+    readonly name: "ClaimVerified";
+    readonly inputs: readonly [{
+        readonly name: "agentId";
+        readonly type: "uint256";
+        readonly indexed: true;
+    }, {
+        readonly name: "epoch";
+        readonly type: "uint32";
+        readonly indexed: true;
+    }];
+}];
 //# sourceMappingURL=abi.d.ts.map

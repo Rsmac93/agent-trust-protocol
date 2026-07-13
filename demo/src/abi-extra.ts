@@ -62,6 +62,13 @@ export const EMISSION_ABI = [
   },
 ] as const;
 
+export const REGISTRY_ADMIN_ABI = [
+  {
+    type: 'function', name: 'setPerformancePassport', stateMutability: 'nonpayable',
+    inputs: [{ name: 'p', type: 'address' }], outputs: [],
+  },
+] as const;
+
 export const REWARD_DISTRIBUTOR_ABI = [
   {
     type: 'function', name: 'syncFromEmission', stateMutability: 'nonpayable',

@@ -40,6 +40,11 @@ contract AgentRegistryV2 is Ownable2Step {
     address public disputeModule;
     /// @notice reward distributor notified of per-validator attestation work
     IAttestationSink public rewardDistributor;
+    /// @notice PerformancePassport contract (additive, wired post-deploy). Purely
+    ///         informational at the registry level — PerformancePassport reads
+    ///         `agents(agentId).principal` from this registry, not the other way
+    ///         around; this field just makes the wiring discoverable on-chain.
+    address public performancePassport;
     uint256 public registrationFee = 0.0005 ether; // ~$2; can be zero during bootstrap
 
     uint256 public nextAgentId = 1;
@@ -68,6 +73,7 @@ contract AgentRegistryV2 is Ownable2Step {
     function setRegistrationFee(uint256 f) external onlyOwner { registrationFee = f; }
     function setDisputeModule(address d) external onlyOwner { disputeModule = d; }
     function setRewardDistributor(IAttestationSink d) external onlyOwner { rewardDistributor = d; }
+    function setPerformancePassport(address p) external onlyOwner { performancePassport = p; }
 
     /// @notice Register an agent. Pays in native ETH — no token needed.
     function registerAgent(bytes32 metadataHash) external payable returns (uint256 agentId) {

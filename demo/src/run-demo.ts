@@ -12,13 +12,30 @@
  *
  * Run: npm run demo   (from demo/), with the anvil fork + deployment already live.
  */
-import { formatEther, parseEther, type Hex } from 'viem';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { formatEther, parseEther, type Hex, type Abi } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { AgentTrust, canonicalHash } from 'agent-trust-protocol-sdk';
+import { AgentTrust, canonicalHash, DEMO_ATTESTOR_PRIVATE_KEY } from 'agent-trust-protocol-sdk';
 import {
   publicClient, deployerWallet, deployerAccount, deployment, walletFor, setBalance, increaseTime,
 } from './config.js';
-import { ERC20_ABI, STAKING_ABI, EMISSION_ABI, REWARD_DISTRIBUTOR_ABI } from './abi-extra.js';
+import {
+  ERC20_ABI, STAKING_ABI, EMISSION_ABI, REWARD_DISTRIBUTOR_ABI, REGISTRY_ADMIN_ABI,
+} from './abi-extra.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '..', '..');
+
+/** Loads a forge build artifact (ABI + bytecode) for ad hoc deployment.
+ *  PerformancePassport isn't part of Deploy.s.sol yet, so the demo deploys
+ *  it itself using the same forge `out/` artifacts forge test/build produce. */
+function loadArtifact(name: string): { abi: Abi; bytecode: Hex } {
+  const file = path.join(REPO_ROOT, 'out', `${name}.sol`, `${name}.json`);
+  const json = JSON.parse(readFileSync(file, 'utf8')) as { abi: Abi; bytecode: { object: Hex } };
+  return { abi: json.abi, bytecode: json.bytecode.object };
+}
 
 const log = (...args: unknown[]) => console.log(...args);
 const hr = () => console.log('─'.repeat(72));
@@ -254,6 +271,62 @@ async function main() {
     log('  finale skipped/failed — not weakening the demo to hide this:');
     log(`  ${(err as Error).message}`);
   }
+
+  section('PHASE 5 — performance passport: agent publishes a verified profit claim');
+
+  // v1's PerformancePassport verifies claims via StubVerifier: a designated
+  // off-chain "attestor" signs (claimType, publicInputs) in place of a real
+  // ZK proof. The SDK's submitClaim() signs with a hardcoded demo attestor
+  // key, so we deploy StubVerifier wired to that same address.
+  const demoAttestor = privateKeyToAccount(DEMO_ATTESTOR_PRIVATE_KEY);
+  log(`  demo attestor (stand-in for a ZK verifier's off-chain signer): ${demoAttestor.address}`);
+
+  const stubVerifierArtifact = loadArtifact('StubVerifier');
+  let deployTx = await deployerWallet.deployContract({
+    abi: stubVerifierArtifact.abi, bytecode: stubVerifierArtifact.bytecode,
+    args: [demoAttestor.address], account: deployerAccount, chain: deployerWallet.chain,
+  });
+  let deployReceipt = await publicClient.waitForTransactionReceipt({ hash: deployTx });
+  const verifierAddress = deployReceipt.contractAddress!;
+  log(`  StubVerifier deployed at ${verifierAddress}  (tx ${deployTx})`);
+
+  const passportArtifact = loadArtifact('PerformancePassport');
+  deployTx = await deployerWallet.deployContract({
+    abi: passportArtifact.abi, bytecode: passportArtifact.bytecode,
+    args: [deployment.AgentRegistryV2, verifierAddress],
+    account: deployerAccount, chain: deployerWallet.chain,
+  });
+  deployReceipt = await publicClient.waitForTransactionReceipt({ hash: deployTx });
+  const passportAddress = deployReceipt.contractAddress!;
+  log(`  PerformancePassport deployed at ${passportAddress}  (tx ${deployTx})`);
+
+  tx = await deployerWallet.writeContract({
+    address: deployment.AgentRegistryV2, abi: REGISTRY_ADMIN_ABI, functionName: 'setPerformancePassport',
+    args: [passportAddress], account: deployerAccount, chain: deployerWallet.chain,
+  });
+  await publicClient.waitForTransactionReceipt({ hash: tx });
+  log(`  AgentRegistryV2.setPerformancePassport(${passportAddress})  (tx ${tx})`);
+
+  const passportTrust = new AgentTrust({
+    network: 'baseSepolia',
+    registryAddress: deployment.AgentRegistryV2,
+    passportAddress,
+    privateKey: agentPk,
+    rpcUrl: process.env.RPC_URL ?? 'http://127.0.0.1:8545',
+  });
+
+  log('  agent generates a mock profit claim: +12.5% over month 1 (hardcoded for demo)');
+  const { txHash: claimTx, claimed } = await passportTrust.submitClaim(agentId, 1, 'PROFIT', '1250');
+  log(`  submitClaim tx: ${claimTx}  (claimed=${claimed})`);
+
+  const passportProfile = await passportTrust.getPassport(agentId);
+  const latestClaim = passportProfile.claims[0];
+  if (!latestClaim) throw new Error('expected a readable claim after submitClaim');
+  log(`  passport.latestEpoch:  ${passportProfile.latestEpoch}`);
+  log(`  passport.claim.type:   ${latestClaim.claimType}`);
+  log(`  passport.claim.epoch:  ${latestClaim.epoch}`);
+  log(`  passport.claim.submittedAt: ${latestClaim.submittedAt.toISOString()}`);
+  log(`Passport claim published: +${(Number(latestClaim.claimData) / 100).toFixed(2)}%`);
 
   hr();
   console.log('DEMO COMPLETE');
