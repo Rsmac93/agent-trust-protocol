@@ -8,7 +8,7 @@
     "demo": "tsx src/run-demo.ts"
   },
   "dependencies": {
-    "agent-trust-sdk": "file:../sdk",
+    "agent-trust-protocol-sdk": "file:../sdk",
     "viem": "^2.55.1"
   },
   "devDependencies": {

@@ -1,19 +1,43 @@
 {
-  "name": "agent-trust-sdk",
+  "name": "agent-trust-protocol-sdk",
   "version": "0.1.0",
-  "description": "",
+  "description": "TypeScript SDK for the Agent Trust Protocol — on-chain identity, verifiable action receipts, and portable reputation for autonomous AI agents",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "ai-agents",
+    "reputation",
+    "trust",
+    "ethereum",
+    "base",
+    "viem",
+    "attestation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rsmac93/agent-trust-protocol.git",
+    "directory": "sdk"
+  },
+  "homepage": "https://github.com/Rsmac93/agent-trust-protocol#readme",
+  "bugs": {
+    "url": "https://github.com/Rsmac93/agent-trust-protocol/issues"
+  },
+  "license": "MIT",
   "dependencies": {
-    "@types/node": "^26.1.1",
-    "typescript": "^5.9.3",
     "viem": "^2.55.1"
   },
-  "type": "module",
-  "types": "dist/index.d.ts"
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^5.9.3"
+  }
 }

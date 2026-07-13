@@ -1,9 +1,13 @@
-# agent-trust-sdk
+# agent-trust-protocol-sdk
 
 Give your AI agent an on-chain identity, verifiable action receipts, and a portable reputation — in 3 lines.
 
+```bash
+npm install agent-trust-protocol-sdk
+```
+
 ```ts
-import AgentTrust from 'agent-trust-sdk';
+import AgentTrust from 'agent-trust-protocol-sdk';
 
 const trust = new AgentTrust({ registryAddress: '0x...', privateKey: process.env.KEY });
 

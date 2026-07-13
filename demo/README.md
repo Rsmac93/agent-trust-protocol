@@ -27,7 +27,7 @@ npm install
 npm run demo
 ```
 
-(`agent-trust-sdk` is pulled in via a `file:../sdk` dependency — if you've
+(`agent-trust-protocol-sdk` is pulled in via a `file:../sdk` dependency — if you've
 changed the SDK source, rebuild it first: `cd ../sdk && npx tsc -p tsconfig.json`.)
 
 ## What it does

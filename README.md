@@ -131,7 +131,7 @@ For a full Base Sepolia walkthrough — funded deployer wallet, faucet ETH,
 
 ## Quickstart — SDK
 
-The [TypeScript SDK](./sdk) (`agent-trust-sdk`) wraps `AgentRegistryV2` with
+The [TypeScript SDK](./sdk) (`agent-trust-protocol-sdk`) wraps `AgentRegistryV2` with
 a [viem](https://viem.sh)-based client.
 
 ```bash
@@ -140,7 +140,7 @@ npm install
 ```
 
 ```ts
-import AgentTrust from 'agent-trust-sdk';
+import AgentTrust from 'agent-trust-protocol-sdk';
 
 const trust = new AgentTrust({
   registryAddress: '0x...', // deployed AgentRegistryV2 address

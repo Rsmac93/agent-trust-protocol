@@ -14,7 +14,7 @@
  */
 import { formatEther, parseEther, type Hex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { AgentTrust, canonicalHash } from 'agent-trust-sdk';
+import { AgentTrust, canonicalHash } from 'agent-trust-protocol-sdk';
 import {
   publicClient, deployerWallet, deployerAccount, deployment, walletFor, setBalance, increaseTime,
 } from './config.js';
