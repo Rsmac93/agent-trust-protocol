@@ -59,7 +59,11 @@ export interface VoltPassConfig {
     rpcUrl?: string;
 }
 /** Deterministic JSON canonicalization (sorted keys) so the same logical
- *  receipt always produces the same hash. */
+ *  receipt always produces the same hash. Bigints (tx values, gas, agentIds
+ *  passed as bigint, etc. — routine in payloads coming from viem/AgentKit
+ *  call args) are stringified recursively before JSON.stringify, which
+ *  otherwise throws on raw bigints ("Do not know how to serialize a
+ *  BigInt"). */
 export declare function canonicalHash(obj: unknown): Hex;
 export declare class VoltPass {
     private pub;

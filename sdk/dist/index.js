@@ -16,9 +16,15 @@ const CLAIM_TYPE_NAME = ['PROFIT', 'RISK_COMPLIANCE', 'EXECUTION_INTEGRITY'];
  *  (or, later, swaps in a real Noir/SP1 verifier) and never ships its key. */
 export const DEMO_ATTESTOR_PRIVATE_KEY = '0xcab3a68048f0a2d12489c0e890a58915b88dbb240ad04e6df314814e2e5fc614';
 /** Deterministic JSON canonicalization (sorted keys) so the same logical
- *  receipt always produces the same hash. */
+ *  receipt always produces the same hash. Bigints (tx values, gas, agentIds
+ *  passed as bigint, etc. — routine in payloads coming from viem/AgentKit
+ *  call args) are stringified recursively before JSON.stringify, which
+ *  otherwise throws on raw bigints ("Do not know how to serialize a
+ *  BigInt"). */
 export function canonicalHash(obj) {
     const canon = (v) => {
+        if (typeof v === 'bigint')
+            return v.toString();
         if (Array.isArray(v))
             return v.map(canon);
         if (v && typeof v === 'object') {

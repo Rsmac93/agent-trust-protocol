@@ -1,6 +1,6 @@
 {
   "name": "voltpass-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TypeScript SDK for VoltPass — on-chain identity, verifiable action receipts, and portable reputation for autonomous AI agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "test": "tsx test/canonicalHash.test.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   }
 }

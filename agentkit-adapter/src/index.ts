@@ -64,30 +64,23 @@ export function withVoltPassLogging<T extends WalletProvider>(
   };
   const voltpass = new VoltPass(voltpassOpts);
 
-  // voltpass-sdk's canonicalHash() JSON.stringify's the payload, which
-  // throws on raw bigints — and sendTransaction's TransactionRequest args
-  // routinely carry bigint fields (value, gas, maxFeePerGas, ...). Stringify
-  // them up front so a perfectly normal call never silently fails to log.
-  function sanitize(v: unknown): unknown {
-    if (typeof v === 'bigint') return v.toString();
-    if (Array.isArray(v)) return v.map(sanitize);
-    if (v && typeof v === 'object') {
-      return Object.fromEntries(
-        Object.entries(v as Record<string, unknown>).map(([k, val]) => [k, sanitize(val)]),
-      );
-    }
-    return v;
-  }
-
   // Fire-and-forget logging: the wrapped call returns as soon as the
   // underlying wallet operation resolves. Receipt logging happens after,
   // asynchronously, and never delays or fails the trade itself.
+  //
+  // Note: sendTransaction's TransactionRequest args routinely carry raw
+  // bigint fields (value, gas, maxFeePerGas, ...) — passed straight through
+  // here uncoerced. voltpass-sdk@0.1.1's canonicalHash() (used internally
+  // by logReceipt) recursively stringifies bigints before JSON.stringify,
+  // so this doesn't need its own sanitize layer — see voltpass-sdk's
+  // test/canonicalHash.test.ts for the regression coverage. Requires
+  // voltpass-sdk >=0.1.1; this package's package.json pins that floor.
   async function logAfter(action: string, args: unknown, txHash: string) {
     try {
       const receipt: ActionReceipt = {
         agentId: opts.agentId,
         action,
-        payload: { args: sanitize(args), txHash },
+        payload: { args, txHash },
       };
       await voltpass.logReceipt(receipt);
     } catch (err) {
