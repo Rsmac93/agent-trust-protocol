@@ -5,8 +5,14 @@
   --fg-dim: #a3a9c2;
   --accent: #00d4ff;
   --accent-dim: #0891b2;
+  --accent2: #a78bfa;
+  --accent2-dim: #7c5cf0;
   --border: #1c2244;
   --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  --prose: 760px;
+  --wide: 1100px;
+  --card-bg: rgba(11, 15, 40, 0.88);
+  --card-blur: blur(14px);
 }
 
 * {
@@ -19,15 +25,48 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
   color: var(--fg);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  /* Static CSS gradient fallback — always present. The 3D particle field
+     (#bg3d canvas) renders on top of this when WebGL/motion/viewport allow;
+     when it doesn't, this gradient alone is the backdrop. */
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(167, 139, 250, 0.10), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 88% 20%, rgba(0, 212, 255, 0.09), transparent 60%),
+    radial-gradient(ellipse 65% 55% at 50% 100%, rgba(139, 92, 246, 0.07), transparent 60%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Persistent full-page 3D backdrop. Fixed so it never scrolls with content;
+   sits behind everything via negative z-index. Left untouched by bg3d.js
+   (transparent) when WebGL/reduced-motion/mobile checks fail, so the body
+   gradient above shows through unobstructed. */
+#bg3d {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  display: block;
+  /* keep the field well behind text contrast-wise — restrained, not busy */
+  opacity: 0.55;
 }
 
 .wrap {
-  max-width: 1150px;
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* narrower column for prose-only sections/elements */
+.wrap-prose {
+  max-width: var(--prose);
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -37,15 +76,6 @@ header.hero {
   overflow: hidden;
   padding: 96px 0 64px;
   border-bottom: 1px solid var(--border);
-}
-
-#hero-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
 }
 
 .hero-content {
@@ -73,7 +103,7 @@ h1 {
 .lede {
   font-size: 1.15rem;
   color: var(--fg-dim);
-  max-width: 620px;
+  max-width: var(--prose);
   margin: 0 0 32px;
 }
 
@@ -139,16 +169,18 @@ h2 {
 
 p {
   color: var(--fg-dim);
-  max-width: 680px;
+  max-width: var(--prose);
 }
 
 .problem-box {
-  background: var(--bg-alt);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
   border-radius: 6px;
   padding: 24px 28px;
-  max-width: 680px;
+  max-width: var(--prose);
 }
 
 .problem-box p {
@@ -164,10 +196,41 @@ p {
 }
 
 .layer-card {
-  background: var(--bg-alt);
+  position: relative;
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 22px;
+  transition: border-color 0.3s ease, box-shadow 0.6s ease;
+  box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.05), 0 0 18px rgba(139, 92, 246, 0.05);
+}
+
+/* subtle animated glow once a layer-card is scrolled into view */
+.layer-card.lc-glow {
+  animation: lcPulse 4.5s ease-in-out infinite;
+}
+
+@keyframes lcPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.12), 0 0 20px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.2), 0 0 30px rgba(0, 212, 255, 0.16);
+  }
+}
+
+.layer-card:hover {
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.3), 0 0 36px rgba(0, 212, 255, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layer-card.lc-glow {
+    animation: none;
+  }
 }
 
 .layer-card .num {
@@ -221,7 +284,9 @@ p {
 }
 
 .flow-step {
-  background: var(--bg-alt);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 16px 20px;
@@ -295,7 +360,9 @@ p {
 
 .reveal-demo {
   margin-top: 48px;
-  background: var(--bg-alt);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 40px 32px;
@@ -342,7 +409,7 @@ p {
   border: 1px solid var(--accent);
   border-radius: 10px;
   padding: 18px 26px;
-  box-shadow: 0 0 32px rgba(0, 212, 255, 0.08);
+  box-shadow: 0 0 32px rgba(0, 212, 255, 0.1), 0 0 56px rgba(167, 139, 250, 0.08);
 }
 
 .reveal-demo.is-active .rd-data,
@@ -438,7 +505,9 @@ p {
 }
 
 .compare-head {
-  background: var(--bg-alt);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
   font-family: var(--mono);
   font-size: 0.74rem;
   text-transform: uppercase;
@@ -478,8 +547,8 @@ p {
   border: 1px solid var(--accent);
   border-radius: 10px;
   padding: 28px 32px;
-  background: rgba(0, 212, 255, 0.06);
-  max-width: 780px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.07), rgba(139, 92, 246, 0.05));
+  max-width: var(--prose);
 }
 
 .gap-callout p {
@@ -603,7 +672,7 @@ pre {
   font-family: var(--mono);
   font-size: 0.88rem;
   line-height: 1.6;
-  max-width: 680px;
+  max-width: var(--prose);
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;
@@ -636,7 +705,7 @@ ul.status-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-width: 680px;
+  max-width: var(--prose);
 }
 
 ul.status-list li {
@@ -667,7 +736,9 @@ ul.status-list li::before {
 .link-card {
   display: block;
   text-decoration: none;
-  background: var(--bg-alt);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 18px 20px;
@@ -707,6 +778,23 @@ footer a {
 
 a {
   color: var(--accent);
+}
+
+/* ---------- scrambled -> proven stat hover ---------- */
+
+.scramble {
+  font-family: var(--mono);
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: default;
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scramble {
+    cursor: text;
+  }
 }
 
 @media (max-width: 600px) {

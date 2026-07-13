@@ -7,8 +7,17 @@
 <meta name="description" content="Verifiable Reputation for AI Trading Agents — with ZK Private Performance Passports. Litepaper v0.9.">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="litepaper.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"
+  }
+}
+</script>
 </head>
 <body>
+
+<canvas id="bg3d" aria-hidden="true"></canvas>
 
 <header class="lp-header">
   <div class="wrap lp-header-inner">
@@ -137,14 +146,14 @@ flowchart TD
         <tr><th>Contract</th><th>Role</th></tr>
       </thead>
       <tbody>
-        <tr><td>AgentRegistryV2</td><td>Identity, both receipt lanes, reputation floor</td></tr>
-        <tr><td>Staking</td><td>Validator bonding (min 1,000 AGT), delegation, 21-day unbonding, slashing &mdash; including slashing of stake in the unbonding queue (evasion-proofed)</td></tr>
-        <tr><td>DisputeModule</td><td>Permissionless challenges, deposits, arbiter resolution (v1 multisig; decentralization roadmap documented)</td></tr>
-        <tr><td>RewardDistributor</td><td>Work-weighted validator rewards (by attestations, not raw stake), delegator pro-rata, commission</td></tr>
-        <tr><td>Emission</td><td>Fixed-supply drip, 4-year halvings, permissionless crank</td></tr>
-        <tr><td>AGTToken</td><td>21M hard cap ERC-20; minting locked to Emission</td></tr>
-        <tr><td>TeamVesting</td><td>4-year linear, 1-year cliff</td></tr>
-        <tr><td><em>PerformancePassport</em></td><td><em>(next module)</em> stores verified ZK claims per agent per epoch</td></tr>
+        <tr><td><code>AgentRegistryV2</code></td><td>Identity, both receipt lanes, reputation floor</td></tr>
+        <tr><td><code>Staking</code></td><td>Validator bonding (min 1,000 AGT), delegation, 21-day unbonding, slashing &mdash; including slashing of stake in the unbonding queue (evasion-proofed)</td></tr>
+        <tr><td><code>DisputeModule</code></td><td>Permissionless challenges, deposits, arbiter resolution (v1 multisig; decentralization roadmap documented)</td></tr>
+        <tr><td><code>RewardDistributor</code></td><td>Work-weighted validator rewards (by attestations, not raw stake), delegator pro-rata, commission</td></tr>
+        <tr><td><code>Emission</code></td><td>Fixed-supply drip, 4-year halvings, permissionless crank</td></tr>
+        <tr><td><code>AGTToken</code></td><td>21M hard cap ERC-20; minting locked to Emission</td></tr>
+        <tr><td><code>TeamVesting</code></td><td>4-year linear, 1-year cliff</td></tr>
+        <tr><td><em><code>PerformancePassport</code></em></td><td><em>(next module)</em> stores verified ZK claims per agent per epoch</td></tr>
       </tbody>
     </table>
   </div>
@@ -212,16 +221,19 @@ flowchart TD
     themeVariables: {
       darkMode: true,
       background: '#0a0e27',
-      primaryColor: '#0d1230',
+      primaryColor: 'rgba(13, 18, 48, 0.85)',
       primaryTextColor: '#f5f5f5',
       primaryBorderColor: '#00d4ff',
-      lineColor: '#00d4ff',
+      lineColor: '#a78bfa',
       secondaryColor: '#0d1230',
+      secondaryBorderColor: '#a78bfa',
       tertiaryColor: '#0d1230',
+      tertiaryBorderColor: '#00d4ff',
       fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif'
     },
     flowchart: { curve: 'basis' }
   });
 </script>
+<script type="module" src="bg3d.js"></script>
 </body>
 </html>

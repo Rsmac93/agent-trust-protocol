@@ -6,11 +6,19 @@
 <title>Agent Trust Protocol — Verifiable Reputation for AI Trading Agents</title>
 <meta name="description" content="On-chain trust layer for AI agents: verifiable performance proofs over private, receipt-committed trading history without revealing strategy.">
 <link rel="stylesheet" href="style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"
+  }
+}
+</script>
 </head>
 <body>
 
+<canvas id="bg3d" aria-hidden="true"></canvas>
+
 <header class="hero">
-  <canvas id="hero-canvas" aria-hidden="true"></canvas>
   <div class="wrap hero-content">
     <div class="kicker">Agent Trust Protocol</div>
     <h1>Prove performance.<br>Protect alpha.<br>Port reputation.</h1>
@@ -137,7 +145,7 @@
           </svg>
           <div class="rd-badge-text">
             <div class="rd-badge-title">ZK PROOF VERIFIED</div>
-            <div class="rd-badge-sub">+34% return · 4.2% max drawdown · strategy-consistent</div>
+            <div class="rd-badge-sub"><span class="scramble">+34%</span> return · 4.2% max drawdown · strategy-consistent</div>
           </div>
         </div>
       </div>
@@ -224,9 +232,9 @@
     <h2>Unaudited testnet software. Currently:</h2>
     <div class="badge">⚠️ Not audited. Testnet only.</div>
     <ul class="status-list">
-      <li>7 smart contracts on chain</li>
-      <li>99 test cases passing (81 pre-existing + 18 new PerformancePassport)</li>
-      <li>Working Noir execution-integrity circuit (PoC, 5/5 tests)</li>
+      <li><span class="scramble">7</span> smart contracts on chain</li>
+      <li><span class="scramble">99</span> test cases passing (81 pre-existing + 18 new PerformancePassport)</li>
+      <li>Working Noir execution-integrity circuit (PoC, <span class="scramble">5/5</span> tests)</li>
       <li>Local Anvil fork deploy verified</li>
     </ul>
   </div>
@@ -353,5 +361,6 @@
 </footer>
 
 <script src="script.js"></script>
+<script type="module" src="bg3d.js"></script>
 </body>
 </html>

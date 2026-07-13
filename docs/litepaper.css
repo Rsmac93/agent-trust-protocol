@@ -2,7 +2,9 @@
 
 .lp-header {
   border-bottom: 1px solid var(--border);
-  background: var(--bg-alt);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
 }
 
 .lp-header-inner {
@@ -41,7 +43,7 @@
 }
 
 .lp-article {
-  max-width: 780px;
+  max-width: var(--prose, 760px);
   padding-top: 56px;
   padding-bottom: 80px;
 }
@@ -142,6 +144,9 @@
   margin: 20px 0 28px;
   border: 1px solid var(--border);
   border-radius: 8px;
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
 }
 
 .lp-article table {
@@ -152,7 +157,7 @@
 }
 
 .lp-article thead {
-  background: var(--bg-alt);
+  background: rgba(0, 212, 255, 0.04);
 }
 
 .lp-article th {
@@ -185,12 +190,15 @@
 }
 
 .lp-diagram {
-  background: var(--bg-alt);
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  -webkit-backdrop-filter: var(--card-blur);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 24px;
   margin: 24px 0 32px;
   overflow-x: auto;
+  box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.05), 0 0 24px rgba(139, 92, 246, 0.06);
 }
 
 .lp-diagram .mermaid {

@@ -46,117 +46,77 @@
     }
   }
 
-  // ---------- hero canvas: drifting hex glyphs ----------
-  var canvas = document.getElementById('hero-canvas');
-  if (!canvas || !canvas.getContext) return;
-
-  var hero = canvas.closest('.hero');
-  if (!hero) return;
-
-  var ctx = canvas.getContext('2d');
-  var chars = '0123456789abcdef';
-  var FONT = "'SFMono-Regular', Consolas, monospace";
-  var COUNT = 42;
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var glyphs = [];
-  var rafId = null;
-
-  function rectOf() {
-    return hero.getBoundingClientRect();
-  }
-
-  function resize() {
-    var rect = rectOf();
-    canvas.width = Math.max(1, rect.width * dpr);
-    canvas.height = Math.max(1, rect.height * dpr);
-    canvas.style.width = rect.width + 'px';
-    canvas.style.height = rect.height + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function seed() {
-    var rect = rectOf();
-    glyphs = [];
-    for (var i = 0; i < COUNT; i++) {
-      glyphs.push({
-        x: Math.random() * rect.width,
-        y: Math.random() * rect.height,
-        vy: 5 + Math.random() * 12,
-        ch: chars[(Math.random() * chars.length) | 0],
-        size: 10 + Math.random() * 8,
-        alpha: 0.05 + Math.random() * 0.14,
-        flip: 2.5 + Math.random() * 4,
-        t: 0
+  // ---------- layer-card glow: subtle pulse once scrolled into view ----------
+  var layerCards = document.querySelectorAll('.layer-card');
+  if (layerCards.length) {
+    if ('IntersectionObserver' in window && !reduceMotion) {
+      var lcIo = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('lc-glow');
+              lcIo.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
+      layerCards.forEach(function (card) {
+        lcIo.observe(card);
       });
     }
+    // hover glow works regardless, via CSS :hover — no JS needed for that.
   }
 
-  function drawStatic() {
-    var rect = rectOf();
-    ctx.clearRect(0, 0, rect.width, rect.height);
-    glyphs.forEach(function (g) {
-      ctx.fillStyle = 'rgba(0, 212, 255, ' + g.alpha + ')';
-      ctx.font = g.size + 'px ' + FONT;
-      ctx.fillText(g.ch, g.x, g.y);
-    });
-  }
+  // ---------- scrambled -> proven stat hover ----------
+  // Elements carry their real value as textContent already (so no-JS / reduced-
+  // motion users always see the correct value). On hover we briefly scramble
+  // the characters, then resolve them left-to-right back to the real value —
+  // a fast (~500ms) cryptographic-reveal flourish, not a hacker-movie loop.
+  var scrambleChars = '0123456789ABCDEF%/+.';
+  var scrambleEls = document.querySelectorAll('.scramble');
+  if (scrambleEls.length && !reduceMotion) {
+    scrambleEls.forEach(function (el) {
+      var final = el.textContent;
+      var running = false;
 
-  var lastFrame = null;
-
-  function frame(t) {
-    if (lastFrame === null) lastFrame = t;
-    var dt = Math.min((t - lastFrame) / 1000, 0.05);
-    lastFrame = t;
-
-    var rect = rectOf();
-    ctx.clearRect(0, 0, rect.width, rect.height);
-
-    glyphs.forEach(function (g) {
-      g.y += g.vy * dt;
-      g.t += dt;
-      if (g.y > rect.height + 20) {
-        g.y = -20;
-        g.x = Math.random() * rect.width;
+      function randChar() {
+        return scrambleChars[(Math.random() * scrambleChars.length) | 0];
       }
-      if (g.t > g.flip) {
-        g.ch = chars[(Math.random() * chars.length) | 0];
-        g.t = 0;
-      }
-      ctx.fillStyle = 'rgba(0, 212, 255, ' + g.alpha + ')';
-      ctx.font = g.size + 'px ' + FONT;
-      ctx.fillText(g.ch, g.x, g.y);
-    });
 
-    rafId = requestAnimationFrame(frame);
-  }
+      function run() {
+        if (running) return;
+        running = true;
+        var start = performance.now();
+        var duration = 480;
 
-  resize();
-  seed();
-
-  window.addEventListener('resize', function () {
-    resize();
-    if (reduceMotion) drawStatic();
-  });
-
-  if (reduceMotion) {
-    drawStatic();
-  } else {
-    rafId = requestAnimationFrame(frame);
-  }
-
-  // pause the loop when the hero scrolls out of view (cheap perf win)
-  if ('IntersectionObserver' in window && !reduceMotion) {
-    var heroIo = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting && rafId) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
-        } else if (entry.isIntersecting && !rafId) {
-          lastFrame = null;
-          rafId = requestAnimationFrame(frame);
+        function tick(now) {
+          var elapsed = now - start;
+          var progress = Math.min(elapsed / duration, 1);
+          var resolvedCount = Math.floor(progress * final.length);
+          var out = '';
+          for (var i = 0; i < final.length; i++) {
+            if (final[i] === ' ') {
+              out += ' ';
+            } else if (i < resolvedCount) {
+              out += final[i];
+            } else {
+              out += randChar();
+            }
+          }
+          el.textContent = out;
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            el.textContent = final;
+            running = false;
+          }
         }
-      });
+        requestAnimationFrame(tick);
+      }
+
+      el.addEventListener('mouseenter', run);
+      el.addEventListener('focus', run);
     });
-    heroIo.observe(hero);
   }
 })();
