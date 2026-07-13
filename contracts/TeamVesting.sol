@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @title TeamVesting — 4-year linear vesting, 1-year cliff
-/// @notice Holds the 5% team allocation (1,050,000 AGT). Nothing claimable
+/// @notice Holds the 5% team allocation (1,050,000 VOLT). Nothing claimable
 ///         before the cliff; then linear release until month 48.
 contract TeamVesting {
     IERC20 public immutable token;

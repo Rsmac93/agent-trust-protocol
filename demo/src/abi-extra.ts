@@ -1,6 +1,6 @@
 // Minimal ABIs for the contracts the demo touches directly (setup + optional
 // reward finale). The registry/reputation surface goes through the SDK
-// (agent-trust-protocol-sdk); these are the protocol-admin / validator-side pieces
+// (voltpass-sdk); these are the protocol-admin / validator-side pieces
 // that are intentionally out of the agent-facing SDK's scope.
 
 export const ERC20_ABI = [

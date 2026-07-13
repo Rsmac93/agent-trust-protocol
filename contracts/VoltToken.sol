@@ -5,11 +5,11 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 
-/// @title AGT — Agent Trust Protocol token
+/// @title VOLT — VoltPass token
 /// @notice Fixed 21,000,000 supply. 10% premined at genesis to vesting/treasury/
 ///         liquidity addresses; remaining 90% mintable ONLY by the Emission
 ///         contract, which enforces the halving schedule.
-contract AGTToken is ERC20, ERC20Burnable, Ownable2Step {
+contract VoltToken is ERC20, ERC20Burnable, Ownable2Step {
     uint256 public constant MAX_SUPPLY = 21_000_000e18;
     uint256 public constant PREMINE = 2_100_000e18; // 10%
 
@@ -30,7 +30,7 @@ contract AGTToken is ERC20, ERC20Burnable, Ownable2Step {
         address teamVesting,
         address treasury,
         address liquidity
-    ) ERC20("Agent Trust Protocol", "AGT") Ownable(msg.sender) {
+    ) ERC20("VoltPass Token", "VOLT") Ownable(msg.sender) {
         _mint(teamVesting, 1_050_000e18);
         _mint(treasury, 840_000e18);
         _mint(liquidity, 210_000e18);

@@ -1,5 +1,5 @@
 /**
- * Agent Trust Protocol — end-to-end demo trading agent.
+ * VoltPass — end-to-end demo trading agent.
  *
  * Phases:
  *   0. Setup   — deployer bonds a validator wallet on Staking (as owner/deployer).
@@ -8,7 +8,7 @@
  *   2. Attest  — the validator attests a subset of those receipts (this is what
  *                actually builds on-chain reputation).
  *   3. Finale  — (optional, best-effort) warp time, crank emission, and have the
- *                validator claim its work reward in AGT.
+ *                validator claim its work reward in VOLT.
  *
  * Run: npm run demo   (from demo/), with the anvil fork + deployment already live.
  */
@@ -17,7 +17,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { formatEther, parseEther, type Hex, type Abi } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
-import { AgentTrust, canonicalHash, DEMO_ATTESTOR_PRIVATE_KEY } from 'agent-trust-protocol-sdk';
+import { VoltPass, canonicalHash, DEMO_ATTESTOR_PRIVATE_KEY } from 'voltpass-sdk';
 import {
   publicClient, deployerWallet, deployerAccount, deployment, walletFor, setBalance, increaseTime,
 } from './config.js';
@@ -60,21 +60,21 @@ async function main() {
     address: deployment.Staking, abi: STAKING_ABI, functionName: 'MIN_BOND',
   });
   const selfBond = minBond * 2n; // comfortably above the activation floor
-  log(`  Staking.MIN_BOND = ${formatEther(minBond)} AGT; bonding ${formatEther(selfBond)} AGT`);
+  log(`  Staking.MIN_BOND = ${formatEther(minBond)} VOLT; bonding ${formatEther(selfBond)} VOLT`);
 
   let tx = await deployerWallet.writeContract({
-    address: deployment.AGTToken, abi: ERC20_ABI, functionName: 'transfer',
+    address: deployment.VoltToken, abi: ERC20_ABI, functionName: 'transfer',
     args: [validatorAccount.address, selfBond], account: deployerAccount, chain: deployerWallet.chain,
   });
   await publicClient.waitForTransactionReceipt({ hash: tx });
-  log(`  deployer -> validator: transferred ${formatEther(selfBond)} AGT  (tx ${tx})`);
+  log(`  deployer -> validator: transferred ${formatEther(selfBond)} VOLT  (tx ${tx})`);
 
   tx = await validatorWallet.writeContract({
-    address: deployment.AGTToken, abi: ERC20_ABI, functionName: 'approve',
+    address: deployment.VoltToken, abi: ERC20_ABI, functionName: 'approve',
     args: [deployment.Staking, selfBond], account: validatorAccount, chain: validatorWallet.chain,
   });
   await publicClient.waitForTransactionReceipt({ hash: tx });
-  log(`  validator approved Staking for ${formatEther(selfBond)} AGT  (tx ${tx})`);
+  log(`  validator approved Staking for ${formatEther(selfBond)} VOLT  (tx ${tx})`);
 
   tx = await validatorWallet.writeContract({
     address: deployment.Staking, abi: STAKING_ABI, functionName: 'bond',
@@ -88,7 +88,7 @@ async function main() {
     address: deployment.Staking, abi: STAKING_ABI, functionName: 'validators',
     args: [validatorAccount.address],
   });
-  log(`  Staking.validators(validator) => selfBond=${formatEther(validatorState[0])} AGT, active=${validatorState[2]}`);
+  log(`  Staking.validators(validator) => selfBond=${formatEther(validatorState[0])} VOLT, active=${validatorState[2]}`);
   if (!validatorState[2]) throw new Error('validator failed to activate');
 
   section('PHASE 1 — demo trading agent: wallet + registration');
@@ -100,7 +100,7 @@ async function main() {
   await setBalance(agentAccount.address, '2');
   log('  funded agent with 2 local ETH (anvil_setBalance)');
 
-  const agentTrust = new AgentTrust({
+  const agentTrust = new VoltPass({
     network: 'baseSepolia',
     registryAddress: deployment.AgentRegistryV2,
     privateKey: agentPk,
@@ -118,7 +118,7 @@ async function main() {
   log(`  registration tx: ${regTx}`);
 
   // validator-side SDK handle, used only for attestReceipt in phase 2
-  const validatorTrust = new AgentTrust({
+  const validatorTrust = new VoltPass({
     network: 'baseSepolia',
     registryAddress: deployment.AgentRegistryV2,
     privateKey: validatorPk,
@@ -249,10 +249,10 @@ async function main() {
       address: deployment.RewardDistributor, abi: REWARD_DISTRIBUTOR_ABI, functionName: 'validatorWorkReward',
       args: [attestEpoch, validatorAccount.address],
     });
-    log(`  validator's computed work reward for epoch ${attestEpoch}: ${formatEther(workReward)} AGT`);
+    log(`  validator's computed work reward for epoch ${attestEpoch}: ${formatEther(workReward)} VOLT`);
 
     const balBefore = await publicClient.readContract({
-      address: deployment.AGTToken, abi: ERC20_ABI, functionName: 'balanceOf', args: [validatorAccount.address],
+      address: deployment.VoltToken, abi: ERC20_ABI, functionName: 'balanceOf', args: [validatorAccount.address],
     });
 
     tx = await validatorWallet.writeContract({
@@ -262,11 +262,11 @@ async function main() {
     await publicClient.waitForTransactionReceipt({ hash: tx });
 
     const balAfter = await publicClient.readContract({
-      address: deployment.AGTToken, abi: ERC20_ABI, functionName: 'balanceOf', args: [validatorAccount.address],
+      address: deployment.VoltToken, abi: ERC20_ABI, functionName: 'balanceOf', args: [validatorAccount.address],
     });
     const claimed = balAfter - balBefore;
     log(`  validator claimed reward (tx ${tx})`);
-    log(`  AGT balance: ${formatEther(balBefore)} -> ${formatEther(balAfter)}  (claimed ${formatEther(claimed)} AGT)`);
+    log(`  VOLT balance: ${formatEther(balBefore)} -> ${formatEther(balAfter)}  (claimed ${formatEther(claimed)} VOLT)`);
   } catch (err) {
     log('  finale skipped/failed — not weakening the demo to hide this:');
     log(`  ${(err as Error).message}`);
@@ -307,7 +307,7 @@ async function main() {
   await publicClient.waitForTransactionReceipt({ hash: tx });
   log(`  AgentRegistryV2.setPerformancePassport(${passportAddress})  (tx ${tx})`);
 
-  const passportTrust = new AgentTrust({
+  const passportTrust = new VoltPass({
     network: 'baseSepolia',
     registryAddress: deployment.AgentRegistryV2,
     passportAddress,

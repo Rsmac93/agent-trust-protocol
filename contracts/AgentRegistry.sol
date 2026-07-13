@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AGTToken} from "./AGTToken.sol";
+import {VoltToken} from "./VoltToken.sol";
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 
 /// @title AgentRegistry — on-chain identity + attestation receipts for AI agents
 /// @notice Each agent is registered by a principal (its human/company owner),
 ///         gets a stable agentId, and accumulates attested receipts from
-///         active validators. Registration fee is paid in AGT, 50% burned.
+///         active validators. Registration fee is paid in VOLT, 50% burned.
 contract AgentRegistry is Ownable2Step {
     struct Agent {
         address principal;      // who is accountable for this agent
@@ -18,10 +18,10 @@ contract AgentRegistry is Ownable2Step {
         uint64 disputes;        // upheld disputes against it
     }
 
-    AGTToken public immutable token;
+    VoltToken public immutable token;
     address public staking; // used to check validator status for attestations
 
-    uint256 public registrationFee = 10e18; // 10 AGT, governance-adjustable
+    uint256 public registrationFee = 10e18; // 10 VOLT, governance-adjustable
     uint256 public constant FEE_BURN_BPS = 5000; // 50%
     address public feeTreasury;
 
@@ -36,7 +36,7 @@ contract AgentRegistry is Ownable2Step {
     error NotPrincipal();
     error AlreadyAttested();
 
-    constructor(AGTToken _token, address _feeTreasury) Ownable(msg.sender) {
+    constructor(VoltToken _token, address _feeTreasury) Ownable(msg.sender) {
         token = _token;
         feeTreasury = _feeTreasury;
     }

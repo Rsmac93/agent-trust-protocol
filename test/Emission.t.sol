@@ -2,16 +2,16 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AGTToken} from "../contracts/AGTToken.sol";
+import {VoltToken} from "../contracts/VoltToken.sol";
 import {Emission} from "../contracts/Emission.sol";
 
 /// @notice Emission tests: the core invariant is that total tokens minted
-///         through the Emission contract can never push AGTToken.totalSupply()
+///         through the Emission contract can never push VoltToken.totalSupply()
 ///         above MAX_SUPPLY (21M), and in particular the emission-only portion
 ///         (excluding the 2.1M premine) can never exceed 18.9M, no matter what
 ///         sequence of mintPending() calls / time offsets happen.
 contract EmissionTest is Test {
-    AGTToken token;
+    VoltToken token;
     Emission emission;
 
     address teamVesting = makeAddr("teamVesting");
@@ -26,7 +26,7 @@ contract EmissionTest is Test {
     uint256 constant EPOCHS_PER_ERA = 1461;
 
     function setUp() public {
-        token = new AGTToken(teamVesting, treasury, liquidity);
+        token = new VoltToken(teamVesting, treasury, liquidity);
         emission = new Emission(token, stakingPool, builderPool);
         token.setMinter(address(emission), true);
     }

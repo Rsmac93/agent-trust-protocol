@@ -1,4 +1,4 @@
-# Agent Trust Protocol
+# VoltPass
 
 A trust and reputation layer for autonomous AI agents.
 
@@ -15,7 +15,7 @@ Concretely:
   do as **action receipts** — either self-reported (free, zero trust
   assumptions, works with no validators live) or validator-attested (feeds
   reputation).
-- **Validators** bond AGT collateral (`Staking`) to earn the right to attest
+- **Validators** bond VOLT collateral (`Staking`) to earn the right to attest
   receipts, and are compensated from protocol emissions for that work.
 - **Anyone** can challenge a validator-attested receipt within a challenge
   window (`DisputeModule`); if the challenge is upheld, the validator is
@@ -41,20 +41,20 @@ Seven contracts:
 
 | Contract | Role |
 |---|---|
-| `AGTToken` | Fixed 21,000,000-cap ERC20. 10% preminted at genesis (vesting/treasury/liquidity); remaining 90% mintable only by `Emission`. |
+| `VoltToken` | Fixed 21,000,000-cap ERC20. 10% preminted at genesis (vesting/treasury/liquidity); remaining 90% mintable only by `Emission`. |
 | `Emission` | Permissionless daily-epoch halving drip of the 90% network allocation over ~4-year eras, split 90% to staking / 10% to the builder pool. |
 | `Staking` | Validator bonding, delegation, unbonding (21-day period), and slashing. Also the sink for the 90% staking share of emissions. |
 | `AgentRegistryV2` | Agent registration (ETH fee, no token required), self-reported and validator-attested receipt lanes, reputation. Current registry — supersedes the legacy `AgentRegistry`. |
 | `RewardDistributor` | Splits the staking share of each epoch's emission 60% validators (work-weighted, by attestation count) / 30% delegators (stake-weighted). |
 | `DisputeModule` | Challenge/resolve flow for attested receipts; upheld challenges slash the validator via `Staking` and record a dispute on `AgentRegistryV2`. |
-| `TeamVesting` | Linear vesting for the team's premined AGT allocation. |
+| `TeamVesting` | Linear vesting for the team's premined VOLT allocation. |
 
 `AgentRegistry.sol` (v1, no `V2` suffix) is a superseded earlier design kept
 for reference only; it is not part of the deployed system.
 
 ```mermaid
 graph LR
-    Token[AGTToken]
+    Token[VoltToken]
     Emit[Emission]
     Stake[Staking]
     Registry[AgentRegistryV2]
@@ -84,7 +84,7 @@ graph LR
     Stake -- burn + challenger payout --> Challenger
 ```
 
-Token flow: `Emission` mints AGT from `AGTToken` and routes it to
+Token flow: `Emission` mints VOLT from `VoltToken` and routes it to
 `RewardDistributor` (staking share) and the builder pool. Slashed stake from
 `DisputeModule` is burned/paid out via `Staking`.
 
@@ -133,7 +133,7 @@ For a full Base Sepolia walkthrough — funded deployer wallet, faucet ETH,
 
 ## Quickstart — SDK
 
-The [TypeScript SDK](./sdk) (`agent-trust-protocol-sdk`) wraps `AgentRegistryV2` with
+The [TypeScript SDK](./sdk) (`voltpass-sdk`) wraps `AgentRegistryV2` with
 a [viem](https://viem.sh)-based client.
 
 ```bash
@@ -142,14 +142,14 @@ npm install
 ```
 
 ```ts
-import AgentTrust from 'agent-trust-protocol-sdk';
+import VoltPass from 'voltpass-sdk';
 
-const trust = new AgentTrust({
+const trust = new VoltPass({
   registryAddress: '0x...', // deployed AgentRegistryV2 address
   privateKey: process.env.KEY as `0x${string}`,
 });
 
-// Register an agent identity (fee paid in native ETH, not AGT)
+// Register an agent identity (fee paid in native ETH, not VOLT)
 const { agentId } = await trust.registerAgent({
   name: 'MyTradingBot',
   model: 'claude-sonnet-4-6',
@@ -164,7 +164,7 @@ await trust.logReceipt({
 });
 
 // Anyone can read an agent's reputation, read-only, no wallet needed
-const info = await new AgentTrust({ registryAddress: '0x...' }).getAgent(agentId);
+const info = await new VoltPass({ registryAddress: '0x...' }).getAgent(agentId);
 console.log(info.reputation);
 ```
 

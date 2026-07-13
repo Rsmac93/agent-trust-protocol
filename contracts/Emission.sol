@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AGTToken} from "./AGTToken.sol";
+import {VoltToken} from "./VoltToken.sol";
 
-/// @title Emission — halving drip for AGT
-/// @notice Emits the 18,900,000 AGT network allocation over daily epochs.
+/// @title Emission — halving drip for VOLT
+/// @notice Emits the 18,900,000 VOLT network allocation over daily epochs.
 ///         Era = 1,461 epochs (~4 years). Daily emission halves each era.
-///         Era 1: 9,450,000 / 1,461 ≈ 6,468.17 AGT per day.
+///         Era 1: 9,450,000 / 1,461 ≈ 6,468.17 VOLT per day.
 ///         Split: 60% validators, 30% delegators (both via StakingPool),
 ///                10% builder incentives (BuilderPool).
 contract Emission {
@@ -18,7 +18,7 @@ contract Emission {
     uint256 public constant DELEGATOR_BPS = 3000;
     uint256 public constant BUILDER_BPS = 1000;
 
-    AGTToken public immutable token;
+    VoltToken public immutable token;
     address public immutable stakingPool;
     address public immutable builderPool;
     uint256 public immutable genesis;
@@ -30,7 +30,7 @@ contract Emission {
 
     error NothingToMint();
 
-    constructor(AGTToken _token, address _stakingPool, address _builderPool) {
+    constructor(VoltToken _token, address _stakingPool, address _builderPool) {
         token = _token;
         stakingPool = _stakingPool;
         builderPool = _builderPool;

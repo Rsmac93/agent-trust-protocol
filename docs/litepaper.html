@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Litepaper — Agent Trust Protocol</title>
+<title>Litepaper — VoltPass</title>
 <meta name="description" content="Verifiable Reputation for AI Trading Agents — with ZK Private Performance Passports. Litepaper v0.9.">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="litepaper.css">
@@ -21,27 +21,27 @@
 
 <header class="lp-header">
   <div class="wrap lp-header-inner">
-    <a class="lp-back" href="./index.html">&larr; Agent Trust Protocol</a>
-    <a class="lp-source" href="https://github.com/Rsmac93/agent-trust-protocol/blob/master/docs/LITEPAPER.md">View source on GitHub</a>
+    <a class="lp-back" href="./index.html">&larr; VoltPass</a>
+    <a class="lp-source" href="https://github.com/Rsmac93/voltpass/blob/master/docs/LITEPAPER.md">View source on GitHub</a>
   </div>
 </header>
 
 <article class="wrap lp-article">
 
   <div class="lp-title-block">
-    <h1>Agent Trust Protocol</h1>
+    <h1>VoltPass</h1>
     <p class="lp-subtitle">Verifiable Reputation for AI Trading Agents — with ZK Private Performance Passports</p>
     <p class="lp-meta"><strong>Litepaper v0.9 (draft) &mdash; July 2026</strong><br>
-      <a href="https://github.com/Rsmac93/agent-trust-protocol">github.com/Rsmac93/agent-trust-protocol</a> &middot;
-      npm: <a href="https://www.npmjs.com/package/agent-trust-protocol-sdk">agent-trust-protocol-sdk</a></p>
+      <a href="https://github.com/Rsmac93/voltpass">github.com/Rsmac93/voltpass</a> &middot;
+      npm: <a href="https://www.npmjs.com/package/voltpass-sdk">voltpass-sdk</a></p>
   </div>
 
   <hr>
 
   <h2>Abstract</h2>
   <p>AI agents are beginning to control real capital. They trade on decentralized exchanges, manage vault strategies, and transact with each other through machine-native payment rails. But there is no trustworthy way to answer the question that matters before capital is allocated: <em>should you trust this agent with your money?</em></p>
-  <p>Agent Trust Protocol is an on-chain trust layer for AI agents, built first for the vertical where trust is most existential: autonomous trading. It combines three primitives &mdash; <strong>identity</strong> (a registry of agents bound to accountable principals), <strong>verifiable action receipts</strong> (cryptographically notarized records of what an agent actually did, attested by economically-staked validators), and <strong>ZK Performance Passports</strong> (zero-knowledge proofs that let an agent demonstrate profitability, risk compliance, and execution integrity <em>without revealing its strategy</em>).</p>
-  <p>The core dilemma the protocol resolves is one no existing system addresses: today, a trading agent can prove its performance only by revealing its trades &mdash; destroying the alpha that made it valuable &mdash; or protect its strategy and remain unverifiable. Identity registries prove <em>who</em> an agent is; ZK leaderboards prove <em>rankings</em>; nothing proves the specific, private claims capital allocators actually require. Agent Trust Protocol closes that gap.</p>
+  <p>VoltPass is an on-chain trust layer for AI agents, built first for the vertical where trust is most existential: autonomous trading. It combines three primitives &mdash; <strong>identity</strong> (a registry of agents bound to accountable principals), <strong>verifiable action receipts</strong> (cryptographically notarized records of what an agent actually did, attested by economically-staked validators), and <strong>ZK Performance Passports</strong> (zero-knowledge proofs that let an agent demonstrate profitability, risk compliance, and execution integrity <em>without revealing its strategy</em>).</p>
+  <p>The core dilemma the protocol resolves is one no existing system addresses: today, a trading agent can prove its performance only by revealing its trades &mdash; destroying the alpha that made it valuable &mdash; or protect its strategy and remain unverifiable. Identity registries prove <em>who</em> an agent is; ZK leaderboards prove <em>rankings</em>; nothing proves the specific, private claims capital allocators actually require. VoltPass closes that gap.</p>
   <p>The protocol is live as an open-source implementation with a complete test suite, a published TypeScript SDK, and a working end-to-end demonstration.</p>
 
   <hr>
@@ -147,11 +147,11 @@ flowchart TD
       </thead>
       <tbody>
         <tr><td><code>AgentRegistryV2</code></td><td>Identity, both receipt lanes, reputation floor</td></tr>
-        <tr><td><code>Staking</code></td><td>Validator bonding (min 1,000 AGT), delegation, 21-day unbonding, slashing &mdash; including slashing of stake in the unbonding queue (evasion-proofed)</td></tr>
+        <tr><td><code>Staking</code></td><td>Validator bonding (min 1,000 VOLT), delegation, 21-day unbonding, slashing &mdash; including slashing of stake in the unbonding queue (evasion-proofed)</td></tr>
         <tr><td><code>DisputeModule</code></td><td>Permissionless challenges, deposits, arbiter resolution (v1 multisig; decentralization roadmap documented)</td></tr>
         <tr><td><code>RewardDistributor</code></td><td>Work-weighted validator rewards (by attestations, not raw stake), delegator pro-rata, commission</td></tr>
         <tr><td><code>Emission</code></td><td>Fixed-supply drip, 4-year halvings, permissionless crank</td></tr>
-        <tr><td><code>AGTToken</code></td><td>21M hard cap ERC-20; minting locked to Emission</td></tr>
+        <tr><td><code>VoltToken</code></td><td>21M hard cap ERC-20; minting locked to Emission</td></tr>
         <tr><td><code>TeamVesting</code></td><td>4-year linear, 1-year cliff</td></tr>
         <tr><td><em><code>PerformancePassport</code></em></td><td><em>(next module)</em> stores verified ZK claims per agent per epoch</td></tr>
       </tbody>
@@ -160,12 +160,12 @@ flowchart TD
   <p>Status: 81-test Foundry suite passing, including 1024-run fuzz invariants on emission caps, unbonding accounting, and reward conservation. One design-level vulnerability (slash evasion via the unbonding queue) was identified and fixed during development, with tests proving evasion-neutrality. <strong>The protocol is unaudited and testnet-only; audit precedes any mainnet deployment.</strong></p>
 
   <h2>4. Token Design</h2>
-  <p>AGT exists to secure the protocol &mdash; deliberately <strong>not</strong> to tax its users.</p>
+  <p>VOLT exists to secure the protocol &mdash; deliberately <strong>not</strong> to tax its users.</p>
   <ul>
     <li><strong>Fixed supply: 21,000,000.</strong> No inflation, ever.</li>
     <li><strong>Premine: 10%</strong> &mdash; 5% team (4-year vest, 1-year cliff), 4% treasury (multisig, transparent), 1% audits + liquidity. No investor allocation at genesis.</li>
     <li><strong>90% emitted</strong> to network participants over daily epochs with 4-year halvings: 60% to validators weighted by attestation work performed, 30% to delegators, 10% to builder incentives.</li>
-    <li><strong>Demand side pays in ETH/stablecoins.</strong> Agent developers never need to touch AGT. The token is validator collateral: bonded to earn attestation rights, slashed for dishonesty. Its value is a function of the security the network must provide &mdash; the more capital relies on attestations, the more collateral honesty requires.</li>
+    <li><strong>Demand side pays in ETH/stablecoins.</strong> Agent developers never need to touch VOLT. The token is validator collateral: bonded to earn attestation rights, slashed for dishonesty. Its value is a function of the security the network must provide &mdash; the more capital relies on attestations, the more collateral honesty requires.</li>
   </ul>
 
   <h2>5. Go-to-Market: One Vertical, Then the Standard</h2>
@@ -209,7 +209,7 @@ flowchart TD
 
 <footer>
   <div class="wrap">
-    <p>Agent Trust Protocol &middot; MIT licensed &middot; <a href="https://github.com/Rsmac93/agent-trust-protocol/blob/master/SECURITY.md">Security notes</a></p>
+    <p>VoltPass &middot; MIT licensed &middot; <a href="https://github.com/Rsmac93/voltpass/blob/master/SECURITY.md">Security notes</a></p>
   </div>
 </footer>
 

@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {Script, console2} from "forge-std/Script.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {AGTToken} from "../contracts/AGTToken.sol";
+import {VoltToken} from "../contracts/VoltToken.sol";
 import {TeamVesting} from "../contracts/TeamVesting.sol";
 import {Staking} from "../contracts/Staking.sol";
 import {AgentRegistryV2, IStakingView, IAttestationSink} from "../contracts/AgentRegistryV2.sol";
@@ -14,7 +14,7 @@ import {
 } from "../contracts/RewardDistributor.sol";
 import {Emission} from "../contracts/Emission.sol";
 
-/// @title Deploy — full Agent Trust Protocol deployment (Base Sepolia)
+/// @title Deploy — full VoltPass deployment (Base Sepolia)
 /// @notice Deploys every contract in dependency order and wires them together.
 ///
 ///         Env vars (see .env.example). Addresses fall back to the deployer if
@@ -28,7 +28,7 @@ import {Emission} from "../contracts/Emission.sol";
 ///           ARBITER            dispute resolver (multisig in prod)
 ///           INSURANCE_FUND     forfeited-deposit recipient
 ///
-///         Circular dependency note: AGTToken premines 5% to the TeamVesting
+///         Circular dependency note: VoltToken premines 5% to the TeamVesting
 ///         contract, but TeamVesting's `token` is immutable and must be set at
 ///         construction. We break the cycle by predicting the token's CREATE
 ///         address (deployer nonce + 1), deploying TeamVesting against the
@@ -59,7 +59,7 @@ contract Deploy is Script {
         address predictedToken = vm.computeCreateAddress(deployer, nonce + 1);
 
         TeamVesting vesting = new TeamVesting(IERC20(predictedToken), teamBeneficiary); // nonce
-        AGTToken token = new AGTToken(address(vesting), treasury, liquidity); // nonce + 1
+        VoltToken token = new VoltToken(address(vesting), treasury, liquidity); // nonce + 1
         require(address(token) == predictedToken, "token address prediction mismatch");
 
         // --- core contracts ---
@@ -84,7 +84,7 @@ contract Deploy is Script {
         vm.stopBroadcast();
 
         // --- summary (copy into deployments record) ---
-        console2.log("AGTToken:         ", address(token));
+        console2.log("VoltToken:         ", address(token));
         console2.log("TeamVesting:      ", address(vesting));
         console2.log("Staking:          ", address(staking));
         console2.log("AgentRegistryV2:  ", address(registry));

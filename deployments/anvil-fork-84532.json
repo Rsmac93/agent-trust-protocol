@@ -2,7 +2,7 @@
   "network": "anvil fork of Base Sepolia (local, chainId 84532)",
   "rpc": "http://127.0.0.1:8545",
   "deployer": "0xFCc7B8Ec8ce431c85a91Fe83d8b0B2a54Faeb710",
-  "AGTToken": "0xd632997a5AdB62B2f080655035DC5876F48Daa29",
+  "VoltToken": "0xd632997a5AdB62B2f080655035DC5876F48Daa29",
   "TeamVesting": "0x36BE307fAaa87DF6fADDc891dbDf7dB60E791d5D",
   "Staking": "0x14Df77e9550DC45104f0BA6E5b56ECc23F3827ac",
   "AgentRegistryV2": "0x187C0C2315c5fE29D417979dc22d49F7a100CEF9",

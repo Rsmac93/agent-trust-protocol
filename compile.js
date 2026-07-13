@@ -2,7 +2,7 @@ const solc = require('solc');
 const fs = require('fs');
 const path = require('path');
 
-const files = ['AGTToken.sol','Emission.sol','Staking.sol','AgentRegistry.sol','AgentRegistryV2.sol','TeamVesting.sol'];
+const files = ['VoltToken.sol','Emission.sol','Staking.sol','AgentRegistry.sol','AgentRegistryV2.sol','TeamVesting.sol'];
 const sources = {};
 files.forEach(f => sources['contracts/'+f] = { content: fs.readFileSync('contracts/'+f,'utf8') });
 

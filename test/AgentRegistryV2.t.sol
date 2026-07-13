@@ -3,12 +3,12 @@ pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
 import {AgentRegistryV2, IStakingView} from "../contracts/AgentRegistryV2.sol";
-import {AGTToken} from "../contracts/AGTToken.sol";
+import {VoltToken} from "../contracts/VoltToken.sol";
 import {Staking} from "../contracts/Staking.sol";
 
 contract AgentRegistryV2Test is Test {
     AgentRegistryV2 registry;
-    AGTToken token;
+    VoltToken token;
     Staking staking;
 
     address feeTreasury = makeAddr("feeTreasury");
@@ -21,7 +21,7 @@ contract AgentRegistryV2Test is Test {
 
     function setUp() public {
         registry = new AgentRegistryV2(feeTreasury);
-        token = new AGTToken(makeAddr("vest"), treasury, makeAddr("liq"));
+        token = new VoltToken(makeAddr("vest"), treasury, makeAddr("liq"));
         staking = new Staking(token);
         registry.setStaking(IStakingView(address(staking)));
 

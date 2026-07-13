@@ -46,7 +46,7 @@ export interface Claim {
  *  real attestation service. A real deployment configures its own attestor
  *  (or, later, swaps in a real Noir/SP1 verifier) and never ships its key. */
 export declare const DEMO_ATTESTOR_PRIVATE_KEY: Hex;
-export interface AgentTrustConfig {
+export interface VoltPassConfig {
     /** 'baseSepolia' (testnet, default) or 'base' */
     network?: 'base' | 'baseSepolia';
     /** Deployed AgentRegistryV2 address */
@@ -61,12 +61,12 @@ export interface AgentTrustConfig {
 /** Deterministic JSON canonicalization (sorted keys) so the same logical
  *  receipt always produces the same hash. */
 export declare function canonicalHash(obj: unknown): Hex;
-export declare class AgentTrust {
+export declare class VoltPass {
     private pub;
     private wallet;
     private registry;
     private passport;
-    constructor(cfg: AgentTrustConfig);
+    constructor(cfg: VoltPassConfig);
     private get account();
     /** Register an agent identity. Returns its on-chain agentId.
      *  Fee is paid in native ETH — no protocol token required. */
@@ -119,5 +119,5 @@ export declare class AgentTrust {
     /** Verify that a locally-held receipt matches what was notarized on-chain. */
     verifyReceipt(fullReceipt: Record<string, unknown>, onChainHash: Hex): boolean;
 }
-export default AgentTrust;
+export default VoltPass;
 //# sourceMappingURL=index.d.ts.map

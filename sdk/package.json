@@ -1,7 +1,7 @@
 {
-  "name": "agent-trust-protocol-sdk",
+  "name": "voltpass-sdk",
   "version": "0.1.0",
-  "description": "TypeScript SDK for the Agent Trust Protocol — on-chain identity, verifiable action receipts, and portable reputation for autonomous AI agents",
+  "description": "TypeScript SDK for VoltPass — on-chain identity, verifiable action receipts, and portable reputation for autonomous AI agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -25,12 +25,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Rsmac93/agent-trust-protocol.git",
+    "url": "git+https://github.com/Rsmac93/voltpass.git",
     "directory": "sdk"
   },
-  "homepage": "https://github.com/Rsmac93/agent-trust-protocol#readme",
+  "homepage": "https://github.com/Rsmac93/voltpass#readme",
   "bugs": {
-    "url": "https://github.com/Rsmac93/agent-trust-protocol/issues"
+    "url": "https://github.com/Rsmac93/voltpass/issues"
   },
   "license": "MIT",
   "dependencies": {

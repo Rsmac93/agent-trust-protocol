@@ -2,11 +2,11 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AGTToken} from "../contracts/AGTToken.sol";
+import {VoltToken} from "../contracts/VoltToken.sol";
 import {Staking} from "../contracts/Staking.sol";
 
 contract StakingTest is Test {
-    AGTToken token;
+    VoltToken token;
     Staking staking;
 
     address owner = address(this);
@@ -24,13 +24,13 @@ contract StakingTest is Test {
     uint256 constant UNBONDING_PERIOD = 21 days;
 
     function setUp() public {
-        token = new AGTToken(teamVesting, treasury, liquidity);
+        token = new VoltToken(teamVesting, treasury, liquidity);
         staking = new Staking(token);
         staking.setSlasher(slasher);
 
         // fund treasury (owner-controlled premine allocations) then
         // distribute to test actors via treasury's own balance since
-        // AGTToken has no free mint besides Emission/minter. Treasury got
+        // VoltToken has no free mint besides Emission/minter. Treasury got
         // 840_000e18 at genesis; use that to fund actors.
         vm.startPrank(treasury);
         token.transfer(validator, 100_000e18);

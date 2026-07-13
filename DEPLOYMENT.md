@@ -1,6 +1,6 @@
 # Base Sepolia Deployment Walkthrough
 
-End-to-end guide to deploy the Agent Trust Protocol to Base Sepolia (chain id
+End-to-end guide to deploy VoltPass to Base Sepolia (chain id
 **84532**), verify every contract on Basescan, and run a live smoke test.
 
 The Foundry pieces are already built and were validated locally against Anvil
@@ -72,7 +72,7 @@ forge script script/Deploy.s.sol:Deploy \
 
 - `--verify` submits source to Basescan automatically as each contract lands
   (uses `[etherscan]` in `foundry.toml`).
-- The script deploys in dependency order — **TeamVesting, AGTToken** (via a
+- The script deploys in dependency order — **TeamVesting, VoltToken** (via a
   predicted-address trick to break the token⇄vesting cycle), **Staking,
   AgentRegistryV2, RewardDistributor, Emission, DisputeModule** — then wires
   everything: `setMinter` (locked to Emission), `setSlasher` → DisputeModule,
@@ -86,12 +86,12 @@ If verification is flaky (public RPCs sometimes rate-limit), re-run just the
 verification for a single contract:
 
 ```bash
-forge verify-contract <ADDRESS> contracts/AGTToken.sol:AGTToken \
+forge verify-contract <ADDRESS> contracts/VoltToken.sol:VoltToken \
   --chain 84532 --watch \
   --constructor-args $(cast abi-encode "constructor(address,address,address)" <VESTING> <TREASURY> <LIQUIDITY>)
 ```
 
-(Constructor args per contract: AGTToken `(teamVesting, treasury, liquidity)`;
+(Constructor args per contract: VoltToken `(teamVesting, treasury, liquidity)`;
 Staking `(token)`; AgentRegistryV2 `(feeTreasury)`; RewardDistributor
 `(token, staking)`; Emission `(token, rewardDistributor, builderPool)`;
 DisputeModule `(registry, staking, arbiter, insuranceFund)`; TeamVesting
@@ -122,7 +122,7 @@ Confirm on Basescan: open the `AgentRegistryV2` address → Events → you shoul
 
 ```
 TeamVesting(token=predicted, beneficiary)
-AGTToken(teamVesting, treasury, liquidity)   # premines 2.1M: 1.05M vest / 0.84M treasury / 0.21M liq
+VoltToken(teamVesting, treasury, liquidity)   # premines 2.1M: 1.05M vest / 0.84M treasury / 0.21M liq
 Staking(token)
 AgentRegistryV2(feeTreasury)
 RewardDistributor(token, staking)

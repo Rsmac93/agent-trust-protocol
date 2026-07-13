@@ -20,7 +20,7 @@ interface IEmissionSchedule {
 }
 
 /// @title RewardDistributor — work-weighted validator + stake-weighted
-///        delegator reward accounting for the Agent Trust Protocol.
+///        delegator reward accounting for VoltPass.
 /// @notice Receives the staking share of emissions (the 90% that the Emission
 ///         contract mints to the staking pool) and splits it, per epoch, as
 ///         60% of TOTAL epoch emission to validators and 30% to delegators
@@ -84,7 +84,7 @@ contract RewardDistributor is Ownable2Step, ReentrancyGuard {
     address public registry; // authorized to report attestation work
     IEmissionSchedule public emission;
 
-    // per-epoch reward pools (in AGT)
+    // per-epoch reward pools (in VOLT)
     mapping(uint256 => uint256) public validatorPool;
     mapping(uint256 => uint256) public delegatorPool;
 

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AGTToken} from "../contracts/AGTToken.sol";
+import {VoltToken} from "../contracts/VoltToken.sol";
 import {Staking} from "../contracts/Staking.sol";
 import {Emission} from "../contracts/Emission.sol";
 import {AgentRegistryV2, IStakingView, IAttestationSink} from "../contracts/AgentRegistryV2.sol";
@@ -11,7 +11,7 @@ import {
 } from "../contracts/RewardDistributor.sol";
 
 contract RewardDistributorTest is Test {
-    AGTToken token;
+    VoltToken token;
     Staking staking;
     Emission emission;
     AgentRegistryV2 registry;
@@ -32,7 +32,7 @@ contract RewardDistributorTest is Test {
     uint256 receiptNonce;
 
     function setUp() public {
-        token = new AGTToken(makeAddr("vest"), treasury, makeAddr("liq"));
+        token = new VoltToken(makeAddr("vest"), treasury, makeAddr("liq"));
         staking = new Staking(token);
         registry = new AgentRegistryV2(feeTreasury);
         dist = new RewardDistributor(token, IStakingRewardView(address(staking)));

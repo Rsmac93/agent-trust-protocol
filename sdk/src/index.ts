@@ -66,7 +66,7 @@ export interface Claim {
 export const DEMO_ATTESTOR_PRIVATE_KEY: Hex =
   '0xcab3a68048f0a2d12489c0e890a58915b88dbb240ad04e6df314814e2e5fc614';
 
-export interface AgentTrustConfig {
+export interface VoltPassConfig {
   /** 'baseSepolia' (testnet, default) or 'base' */
   network?: 'base' | 'baseSepolia';
   /** Deployed AgentRegistryV2 address */
@@ -94,13 +94,13 @@ export function canonicalHash(obj: unknown): Hex {
   return keccak256(toHex(JSON.stringify(canon(obj))));
 }
 
-export class AgentTrust {
+export class VoltPass {
   private pub;
   private wallet;
   private registry: Address;
   private passport: Address | undefined;
 
-  constructor(cfg: AgentTrustConfig) {
+  constructor(cfg: VoltPassConfig) {
     const chain = CHAINS[cfg.network ?? 'baseSepolia'];
     const transport = http(cfg.rpcUrl);
     this.registry = cfg.registryAddress;
@@ -112,7 +112,7 @@ export class AgentTrust {
   }
 
   private get account() {
-    if (!this.wallet) throw new Error('AgentTrust: privateKey required for write operations');
+    if (!this.wallet) throw new Error('VoltPass: privateKey required for write operations');
     return this.wallet.account!;
   }
 
@@ -205,10 +205,10 @@ export class AgentTrust {
   async submitClaim(
     agentId: bigint, epoch: number, claimType: string, claimData: string,
   ): Promise<{ txHash: Hex; claimed: boolean }> {
-    if (!this.passport) throw new Error('AgentTrust: passportAddress required for submitClaim');
+    if (!this.passport) throw new Error('VoltPass: passportAddress required for submitClaim');
     const type = claimType as ClaimTypeName;
     const code = CLAIM_TYPE_CODE[type];
-    if (code === undefined) throw new Error(`AgentTrust: unknown claim type "${claimType}"`);
+    if (code === undefined) throw new Error(`VoltPass: unknown claim type "${claimType}"`);
 
     const data = BigInt(claimData);
     const rangeStart: Hex = `0x${'0'.repeat(64)}`;
@@ -239,7 +239,7 @@ export class AgentTrust {
    *  claim currently stored for it (empty array if the agent has never
    *  published a claim). */
   async getPassport(agentId: bigint): Promise<{ latestEpoch: number; claims: Claim[] }> {
-    if (!this.passport) throw new Error('AgentTrust: passportAddress required for getPassport');
+    if (!this.passport) throw new Error('VoltPass: passportAddress required for getPassport');
     const id = BigInt(agentId);
     const [latestEpoch, c] = await Promise.all([
       this.pub.readContract({
@@ -272,4 +272,4 @@ export class AgentTrust {
   }
 }
 
-export default AgentTrust;
+export default VoltPass;

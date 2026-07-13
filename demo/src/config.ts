@@ -40,7 +40,7 @@ export interface Deployment {
   network: string;
   rpc: string;
   deployer: Address;
-  AGTToken: Address;
+  VoltToken: Address;
   TeamVesting: Address;
   Staking: Address;
   AgentRegistryV2: Address;

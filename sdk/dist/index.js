@@ -28,7 +28,7 @@ export function canonicalHash(obj) {
     };
     return keccak256(toHex(JSON.stringify(canon(obj))));
 }
-export class AgentTrust {
+export class VoltPass {
     pub;
     wallet;
     registry;
@@ -45,7 +45,7 @@ export class AgentTrust {
     }
     get account() {
         if (!this.wallet)
-            throw new Error('AgentTrust: privateKey required for write operations');
+            throw new Error('VoltPass: privateKey required for write operations');
         return this.wallet.account;
     }
     /** Register an agent identity. Returns its on-chain agentId.
@@ -130,11 +130,11 @@ export class AgentTrust {
      *  key that ships in SDK source. */
     async submitClaim(agentId, epoch, claimType, claimData) {
         if (!this.passport)
-            throw new Error('AgentTrust: passportAddress required for submitClaim');
+            throw new Error('VoltPass: passportAddress required for submitClaim');
         const type = claimType;
         const code = CLAIM_TYPE_CODE[type];
         if (code === undefined)
-            throw new Error(`AgentTrust: unknown claim type "${claimType}"`);
+            throw new Error(`VoltPass: unknown claim type "${claimType}"`);
         const data = BigInt(claimData);
         const rangeStart = `0x${'0'.repeat(64)}`;
         const rangeEnd = `0x${'0'.repeat(64)}`;
@@ -159,7 +159,7 @@ export class AgentTrust {
      *  published a claim). */
     async getPassport(agentId) {
         if (!this.passport)
-            throw new Error('AgentTrust: passportAddress required for getPassport');
+            throw new Error('VoltPass: passportAddress required for getPassport');
         const id = BigInt(agentId);
         const [latestEpoch, c] = await Promise.all([
             this.pub.readContract({
@@ -189,5 +189,5 @@ export class AgentTrust {
         return canonicalHash(fullReceipt) === onChainHash;
     }
 }
-export default AgentTrust;
+export default VoltPass;
 //# sourceMappingURL=index.js.map

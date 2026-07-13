@@ -1,8 +1,8 @@
-# Agent Trust Protocol
+# VoltPass
 ## Verifiable Reputation for AI Trading Agents — with ZK Private Performance Passports
 
 **Litepaper v0.9 (draft) — July 2026**
-github.com/Rsmac93/agent-trust-protocol · npm: agent-trust-protocol-sdk
+github.com/Rsmac93/voltpass · npm: voltpass-sdk
 
 ---
 
@@ -10,9 +10,9 @@ github.com/Rsmac93/agent-trust-protocol · npm: agent-trust-protocol-sdk
 
 AI agents are beginning to control real capital. They trade on decentralized exchanges, manage vault strategies, and transact with each other through machine-native payment rails. But there is no trustworthy way to answer the question that matters before capital is allocated: *should you trust this agent with your money?*
 
-Agent Trust Protocol is an on-chain trust layer for AI agents, built first for the vertical where trust is most existential: autonomous trading. It combines three primitives — **identity** (a registry of agents bound to accountable principals), **verifiable action receipts** (cryptographically notarized records of what an agent actually did, attested by economically-staked validators), and **ZK Performance Passports** (zero-knowledge proofs that let an agent demonstrate profitability, risk compliance, and execution integrity *without revealing its strategy*).
+VoltPass is an on-chain trust layer for AI agents, built first for the vertical where trust is most existential: autonomous trading. It combines three primitives — **identity** (a registry of agents bound to accountable principals), **verifiable action receipts** (cryptographically notarized records of what an agent actually did, attested by economically-staked validators), and **ZK Performance Passports** (zero-knowledge proofs that let an agent demonstrate profitability, risk compliance, and execution integrity *without revealing its strategy*).
 
-The core dilemma the protocol resolves is one no existing system addresses: today, a trading agent can prove its performance only by revealing its trades — destroying the alpha that made it valuable — or protect its strategy and remain unverifiable. Identity registries prove *who* an agent is; ZK leaderboards prove *rankings*; nothing proves the specific, private claims capital allocators actually require. Agent Trust Protocol closes that gap.
+The core dilemma the protocol resolves is one no existing system addresses: today, a trading agent can prove its performance only by revealing its trades — destroying the alpha that made it valuable — or protect its strategy and remain unverifiable. Identity registries prove *who* an agent is; ZK leaderboards prove *rankings*; nothing proves the specific, private claims capital allocators actually require. VoltPass closes that gap.
 
 The protocol is live as an open-source implementation with a complete test suite, a published TypeScript SDK, and a working end-to-end demonstration.
 
@@ -120,11 +120,11 @@ Seven contracts, deployed and wired (Base; EVM-portable):
 | Contract | Role |
 |---|---|
 | AgentRegistryV2 | Identity, both receipt lanes, reputation floor |
-| Staking | Validator bonding (min 1,000 AGT), delegation, 21-day unbonding, slashing — including slashing of stake in the unbonding queue (evasion-proofed) |
+| Staking | Validator bonding (min 1,000 VOLT), delegation, 21-day unbonding, slashing — including slashing of stake in the unbonding queue (evasion-proofed) |
 | DisputeModule | Permissionless challenges, deposits, arbiter resolution (v1 multisig; decentralization roadmap documented) |
 | RewardDistributor | Work-weighted validator rewards (by attestations, not raw stake), delegator pro-rata, commission |
 | Emission | Fixed-supply drip, 4-year halvings, permissionless crank |
-| AGTToken | 21M hard cap ERC-20; minting locked to Emission |
+| VoltToken | 21M hard cap ERC-20; minting locked to Emission |
 | TeamVesting | 4-year linear, 1-year cliff |
 | *PerformancePassport* | *(next module)* stores verified ZK claims per agent per epoch |
 
@@ -132,12 +132,12 @@ Status: 81-test Foundry suite passing, including 1024-run fuzz invariants on emi
 
 ## 4. Token Design
 
-AGT exists to secure the protocol — deliberately **not** to tax its users.
+VOLT exists to secure the protocol — deliberately **not** to tax its users.
 
 - **Fixed supply: 21,000,000.** No inflation, ever.
 - **Premine: 10%** — 5% team (4-year vest, 1-year cliff), 4% treasury (multisig, transparent), 1% audits + liquidity. No investor allocation at genesis.
 - **90% emitted** to network participants over daily epochs with 4-year halvings: 60% to validators weighted by attestation work performed, 30% to delegators, 10% to builder incentives.
-- **Demand side pays in ETH/stablecoins.** Agent developers never need to touch AGT. The token is validator collateral: bonded to earn attestation rights, slashed for dishonesty. Its value is a function of the security the network must provide — the more capital relies on attestations, the more collateral honesty requires.
+- **Demand side pays in ETH/stablecoins.** Agent developers never need to touch VOLT. The token is validator collateral: bonded to earn attestation rights, slashed for dishonesty. Its value is a function of the security the network must provide — the more capital relies on attestations, the more collateral honesty requires.
 
 ## 5. Go-to-Market: One Vertical, Then the Standard
 

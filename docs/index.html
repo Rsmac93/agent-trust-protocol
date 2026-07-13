@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agent Trust Protocol — Verifiable Reputation for AI Trading Agents</title>
+<title>VoltPass — Verifiable Reputation for AI Trading Agents</title>
 <meta name="description" content="On-chain trust layer for AI agents: verifiable performance proofs over private, receipt-committed trading history without revealing strategy.">
 <link rel="stylesheet" href="style.css">
 <script type="importmap">
@@ -20,14 +20,14 @@
 
 <header class="hero">
   <div class="wrap hero-content">
-    <div class="kicker">Agent Trust Protocol</div>
+    <div class="kicker">VoltPass</div>
     <h1>Prove performance.<br>Protect alpha.<br>Port reputation.</h1>
     <p class="lede">
       An on-chain trust layer for AI agents: verifiable performance proofs over
       private, receipt-committed trading history — without revealing a single trade.
     </p>
     <div class="cta-row">
-      <a class="btn primary" href="https://github.com/Rsmac93/agent-trust-protocol">View on GitHub</a>
+      <a class="btn primary" href="https://github.com/Rsmac93/voltpass">View on GitHub</a>
       <a class="btn ghost" href="./litepaper.html">Read the Litepaper</a>
     </div>
   </div>
@@ -45,7 +45,7 @@
       <p>Identity registries prove <em>who</em> an agent is. ZK leaderboards prove
         <em>rankings</em>. Neither proves the specific claims — returns, drawdown,
         execution integrity — that an allocator actually needs before trusting an
-        agent with money. That gap is what Agent Trust Protocol closes.</p>
+        agent with money. That gap is what VoltPass closes.</p>
     </div>
   </div>
 </section>
@@ -210,7 +210,7 @@
     <p>The TypeScript SDK wraps the on-chain registry with a viem-based client.
       Register an agent, log receipts, done.</p>
     <pre><code><span class="tok-kw">import</span> AgentTrust <span class="tok-kw">from</span>
-  <span class="tok-str">'agent-trust-protocol-sdk'</span>;
+  <span class="tok-str">'voltpass-sdk'</span>;
 
 <span class="tok-kw">const</span> trust = <span class="tok-kw">new</span> <span class="tok-fn">AgentTrust</span>({
   registryAddress: <span class="tok-str">'0x...'</span>,
@@ -334,19 +334,19 @@
     <div class="section-label">Links</div>
     <h2>Explore the protocol</h2>
     <div class="links-grid">
-      <a class="link-card" href="https://github.com/Rsmac93/agent-trust-protocol">
+      <a class="link-card" href="https://github.com/Rsmac93/voltpass">
         <div class="link-title">GitHub</div>
-        <div class="link-sub">Rsmac93/agent-trust-protocol</div>
+        <div class="link-sub">Rsmac93/voltpass</div>
       </a>
-      <a class="link-card" href="https://www.npmjs.com/package/agent-trust-protocol-sdk">
+      <a class="link-card" href="https://www.npmjs.com/package/voltpass-sdk">
         <div class="link-title">npm</div>
-        <div class="link-sub">agent-trust-protocol-sdk</div>
+        <div class="link-sub">voltpass-sdk</div>
       </a>
       <a class="link-card" href="./litepaper.html">
         <div class="link-title">Litepaper</div>
         <div class="link-sub">docs/litepaper.html</div>
       </a>
-      <a class="link-card" href="https://github.com/Rsmac93/agent-trust-protocol/tree/master/circuits/execution_integrity">
+      <a class="link-card" href="https://github.com/Rsmac93/voltpass/tree/master/circuits/execution_integrity">
         <div class="link-title">Noir Circuit PoC</div>
         <div class="link-sub">circuits/execution_integrity</div>
       </a>
@@ -356,7 +356,7 @@
 
 <footer>
   <div class="wrap">
-    <p>Agent Trust Protocol · MIT licensed · <a href="https://github.com/Rsmac93/agent-trust-protocol/blob/master/SECURITY.md">Security notes</a></p>
+    <p>VoltPass · MIT licensed · <a href="https://github.com/Rsmac93/voltpass/blob/master/SECURITY.md">Security notes</a></p>
   </div>
 </footer>
 

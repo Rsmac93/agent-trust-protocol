@@ -14,7 +14,7 @@ interface IAttestationSink {
 /// @title AgentRegistryV2 — adoption-first revision
 /// @notice Changes vs v1 (driven by SDK/DX review):
 ///         1. Fees in native ETH (no token purchase required to onboard).
-///            AGT enters the system ONLY on the validator/staking side.
+///            VOLT enters the system ONLY on the validator/staking side.
 ///         2. Two receipt lanes:
 ///            - logReceipt(): self-reported by the agent's principal. Free
 ///              record, zero trust assumptions, works with ZERO validators

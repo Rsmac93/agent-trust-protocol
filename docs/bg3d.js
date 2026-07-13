@@ -1,5 +1,5 @@
 /*
- * Agent Trust Protocol — persistent 3D background field.
+ * VoltPass — persistent 3D background field.
  *
  * A restrained, full-viewport Three.js particle network suggesting
  * encrypted data: drifting nodes, faint connecting lines, occasional

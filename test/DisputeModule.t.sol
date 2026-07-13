@@ -2,13 +2,13 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {AGTToken} from "../contracts/AGTToken.sol";
+import {VoltToken} from "../contracts/VoltToken.sol";
 import {Staking} from "../contracts/Staking.sol";
 import {AgentRegistryV2, IStakingView} from "../contracts/AgentRegistryV2.sol";
 import {DisputeModule} from "../contracts/DisputeModule.sol";
 
 contract DisputeModuleTest is Test {
-    AGTToken token;
+    VoltToken token;
     Staking staking;
     AgentRegistryV2 registry;
     DisputeModule dispute;
@@ -31,7 +31,7 @@ contract DisputeModuleTest is Test {
     bytes32 constant RECEIPT = keccak256("receipt-1");
 
     function setUp() public {
-        token = new AGTToken(makeAddr("vest"), treasury, makeAddr("liq"));
+        token = new VoltToken(makeAddr("vest"), treasury, makeAddr("liq"));
         staking = new Staking(token);
         registry = new AgentRegistryV2(feeTreasury);
         dispute = new DisputeModule(registry, staking, arbiter, insuranceFund);
@@ -168,7 +168,7 @@ contract DisputeModuleTest is Test {
         (uint256 selfBond,,,) = staking.validators(validator);
         assertEq(selfBond, 8_000e18);
 
-        // challenger: ETH deposit refunded + AGT slash share (half of 2_000)
+        // challenger: ETH deposit refunded + VOLT slash share (half of 2_000)
         assertEq(challenger.balance, challengerEthBefore + DEPOSIT);
         assertEq(token.balanceOf(challenger), 1_000e18);
 

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {AGTToken} from "./AGTToken.sol";
+import {VoltToken} from "./VoltToken.sol";
 import {Ownable2Step, Ownable} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title Staking — validator bonding, delegation & slashing for the
-///        Agent Trust Protocol.
+///        VoltPass.
 /// @notice Validators bond >= MIN_BOND to earn the right to attest agent
 ///         receipts. Emissions arrive from the Emission contract and are
 ///         split 60% validators / 30% delegators (of the total epoch
@@ -22,7 +22,7 @@ contract Staking is Ownable2Step, ReentrancyGuard {
     uint256 public constant SLASH_DOUBLE_SIGN = 1000; // 10%
     uint256 public constant SLASH_DOWNTIME = 50; // 0.5%
 
-    AGTToken public immutable token;
+    VoltToken public immutable token;
     /// @notice contract authorized to prove misbehavior (dispute module)
     address public slasher;
 
@@ -58,7 +58,7 @@ contract Staking is Ownable2Step, ReentrancyGuard {
     error NothingClaimable();
     error CommissionTooHigh();
 
-    constructor(AGTToken _token) Ownable(msg.sender) {
+    constructor(VoltToken _token) Ownable(msg.sender) {
         token = _token;
     }
 
