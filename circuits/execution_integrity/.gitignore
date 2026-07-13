@@ -1,0 +1,4 @@
+target/
+.nargo/
+Prover.toml
+Verifier.toml
