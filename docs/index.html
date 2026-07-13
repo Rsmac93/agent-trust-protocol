@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Trust Protocol — Verifiable Reputation for AI Trading Agents</title>
+<meta name="description" content="On-chain trust layer for AI agents: verifiable performance proofs over private, receipt-committed trading history without revealing strategy.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Agent Trust Protocol</div>
+    <h1>Prove performance. Protect alpha. Port reputation.</h1>
+    <p class="lede">
+      An on-chain trust layer for AI agents: verifiable performance proofs over
+      private, receipt-committed trading history — without revealing a single trade.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="https://github.com/Rsmac93/agent-trust-protocol">View on GitHub</a>
+      <a class="btn ghost" href="./LITEPAPER.md">Read the Litepaper</a>
+    </div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="section-label">The Problem</div>
+    <h2>Reveal your trades, or stay invisible.</h2>
+    <p>Today an AI trading agent faces an impossible choice: prove its performance by
+      revealing its trades — destroying the alpha that made the strategy valuable in
+      the first place — or keep the strategy private and remain unverifiable to anyone
+      who might allocate it capital.</p>
+    <div class="problem-box">
+      <p>Identity registries prove <em>who</em> an agent is. ZK leaderboards prove
+        <em>rankings</em>. Neither proves the specific claims — returns, drawdown,
+        execution integrity — that an allocator actually needs before trusting an
+        agent with money. That gap is what Agent Trust Protocol closes.</p>
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works">
+  <div class="wrap">
+    <div class="section-label">How It Works</div>
+    <h2>Three layers of trust</h2>
+    <p>Identity establishes who an agent is. Receipts make its history
+      tamper-evident. ZK passports let it prove claims about that history
+      without ever exposing it.</p>
+
+    <div class="layers">
+      <div class="layer-card">
+        <div class="num">01</div>
+        <h3>Identity</h3>
+        <p>Every agent registers on-chain with a stable <code>agentId</code>, bound
+          to an accountable principal and a hash of its agent card. No protocol
+          token required to onboard.</p>
+      </div>
+      <div class="layer-card">
+        <div class="num">02</div>
+        <h3>Verifiable Receipts</h3>
+        <p>Two lanes: <strong>self-reported</strong> (free, permissionless,
+          tamper-evident from day one) and <strong>attested</strong> (staked
+          validators confirm objective facts, with a challenge-and-slash
+          dispute module).</p>
+      </div>
+      <div class="layer-card">
+        <div class="num">03</div>
+        <h3>ZK Performance Passports</h3>
+        <p>Zero-knowledge proofs over the private receipt ledger: profit,
+          risk-compliance, and execution-integrity claims — proven, never
+          revealed.</p>
+      </div>
+    </div>
+
+    <div class="flow">
+<span class="step">[Agent registers identity]</span> on-chain
+        │
+        ▼
+<span class="step">[Agent trades]</span> privately — strategy never leaves the agent
+        │
+        ▼
+<span class="step">[Each action hashed]</span> and logged as a receipt (tamper-evident, private)
+        │
+        ▼
+<span class="step">[Staked validators attest]</span> objective facts — skin in the game
+        │     ╲
+        │      ╲─▶ false attestation → challenged &amp; slashed (-20% bond)
+        ▼
+<span class="step">[Agent generates a ZK proof]</span> over its receipt history
+        │
+        ▼
+<span class="step">[Passport]</span>: verified claims — profit / drawdown / integrity
+        │
+        ▼
+<span class="step">[Vaults &amp; platforms]</span> check the passport before allocating capital
+    </div>
+  </div>
+</section>
+
+<section id="sdk">
+  <div class="wrap">
+    <div class="section-label">SDK</div>
+    <h2>Three lines to a verifiable identity</h2>
+    <p>The TypeScript SDK wraps the on-chain registry with a viem-based client.
+      Register an agent, log receipts, done.</p>
+    <pre><code><span class="tok-kw">import</span> AgentTrust <span class="tok-kw">from</span> <span class="tok-str">'agent-trust-protocol-sdk'</span>;
+
+<span class="tok-kw">const</span> trust = <span class="tok-kw">new</span> <span class="tok-fn">AgentTrust</span>({ registryAddress: <span class="tok-str">'0x...'</span>, privateKey: process.env.KEY });
+
+<span class="tok-kw">const</span> { agentId } = <span class="tok-kw">await</span> trust.<span class="tok-fn">registerAgent</span>({
+  name: <span class="tok-str">'MyTradingBot'</span>,
+  model: <span class="tok-str">'claude-sonnet-4-6'</span>,
+  capabilities: [<span class="tok-str">'defi-trading'</span>],
+});</code></pre>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <div class="section-label">Status</div>
+    <h2>Unaudited testnet software. Currently:</h2>
+    <div class="badge">⚠️ Not audited. Testnet only.</div>
+    <ul class="status-list">
+      <li>7 smart contracts on chain</li>
+      <li>99 test cases passing (81 pre-existing + 18 new PerformancePassport)</li>
+      <li>Working Noir execution-integrity circuit (PoC, 5/5 tests)</li>
+      <li>Local Anvil fork deploy verified</li>
+    </ul>
+  </div>
+</section>
+
+<section id="links">
+  <div class="wrap">
+    <div class="section-label">Links</div>
+    <h2>Explore the protocol</h2>
+    <div class="links-grid">
+      <a class="link-card" href="https://github.com/Rsmac93/agent-trust-protocol">
+        <div class="link-title">GitHub</div>
+        <div class="link-sub">Rsmac93/agent-trust-protocol</div>
+      </a>
+      <a class="link-card" href="https://www.npmjs.com/package/agent-trust-protocol-sdk">
+        <div class="link-title">npm</div>
+        <div class="link-sub">agent-trust-protocol-sdk</div>
+      </a>
+      <a class="link-card" href="./LITEPAPER.md">
+        <div class="link-title">Litepaper</div>
+        <div class="link-sub">docs/LITEPAPER.md</div>
+      </a>
+      <a class="link-card" href="https://github.com/Rsmac93/agent-trust-protocol/tree/master/circuits/execution_integrity">
+        <div class="link-title">Noir Circuit PoC</div>
+        <div class="link-sub">circuits/execution_integrity</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Agent Trust Protocol · MIT licensed · <a href="https://github.com/Rsmac93/agent-trust-protocol/blob/master/SECURITY.md">Security notes</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
