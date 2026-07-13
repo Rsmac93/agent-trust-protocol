@@ -10,9 +10,10 @@
 <body>
 
 <header class="hero">
-  <div class="wrap">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="wrap hero-content">
     <div class="kicker">Agent Trust Protocol</div>
-    <h1>Prove performance. Protect alpha. Port reputation.</h1>
+    <h1>Prove performance.<br>Protect alpha.<br>Port reputation.</h1>
     <p class="lede">
       An on-chain trust layer for AI agents: verifiable performance proofs over
       private, receipt-committed trading history — without revealing a single trade.
@@ -24,7 +25,7 @@
   </div>
 </header>
 
-<section id="problem">
+<section id="problem" class="reveal">
   <div class="wrap">
     <div class="section-label">The Problem</div>
     <h2>Reveal your trades, or stay invisible.</h2>
@@ -41,7 +42,7 @@
   </div>
 </section>
 
-<section id="how-it-works">
+<section id="how-it-works" class="reveal">
   <div class="wrap">
     <div class="section-label">How It Works</div>
     <h2>Three layers of trust</h2>
@@ -74,52 +75,152 @@
       </div>
     </div>
 
-    <div class="flow">
-<span class="step">[Agent registers identity]</span> on-chain
-        │
-        ▼
-<span class="step">[Agent trades]</span> privately — strategy never leaves the agent
-        │
-        ▼
-<span class="step">[Each action hashed]</span> and logged as a receipt (tamper-evident, private)
-        │
-        ▼
-<span class="step">[Staked validators attest]</span> objective facts — skin in the game
-        │     ╲
-        │      ╲─▶ false attestation → challenged &amp; slashed (-20% bond)
-        ▼
-<span class="step">[Agent generates a ZK proof]</span> over its receipt history
-        │
-        ▼
-<span class="step">[Passport]</span>: verified claims — profit / drawdown / integrity
-        │
-        ▼
-<span class="step">[Vaults &amp; platforms]</span> check the passport before allocating capital
+    <div class="flow-diagram">
+      <div class="flow-chain">
+        <div class="flow-step">
+          <div class="flow-step-title">Agent registers identity</div>
+          <div class="flow-step-sub">on-chain</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step-title">Agent trades</div>
+          <div class="flow-step-sub">privately — strategy never leaves the agent</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step-title">Each action hashed</div>
+          <div class="flow-step-sub">and logged as a receipt (tamper-evident, private)</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step-branchpoint">
+          <div class="flow-step-title">Staked validators attest</div>
+          <div class="flow-step-sub">objective facts — skin in the game</div>
+          <div class="flow-branch">
+            <div class="flow-branch-line" aria-hidden="true"></div>
+            <div class="flow-branch-box">
+              <div class="flow-branch-title">⚠ False attestation</div>
+              <div class="flow-branch-sub">challenged &amp; slashed — &minus;20% bond</div>
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step-title">Agent generates a ZK proof</div>
+          <div class="flow-step-sub">over its receipt history</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step-title">Passport</div>
+          <div class="flow-step-sub">verified claims — profit / drawdown / integrity</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step-final">
+          <div class="flow-step-title">Vaults &amp; platforms</div>
+          <div class="flow-step-sub">check the passport before allocating capital</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-demo" id="private-proven">
+      <div class="rd-inner">
+        <div class="rd-data" aria-hidden="true">
+          <span class="rd-row">ETH/USDC&nbsp;&nbsp;+2.14</span>
+          <span class="rd-row">size 0.83&nbsp;&nbsp;entry 3d1f</span>
+          <span class="rd-row">-1.02&nbsp;&nbsp;9f4a2c</span>
+          <span class="rd-row">SOL/USDC&nbsp;&nbsp;+0.61</span>
+          <span class="rd-row">7be0&nbsp;&nbsp;exit 44a1</span>
+        </div>
+        <div class="rd-badge">
+          <svg class="rd-check" viewBox="0 0 52 52" width="40" height="40">
+            <circle class="rd-check-circle" cx="26" cy="26" r="24"/>
+            <path class="rd-check-mark" d="M14 27l7 7 17-17"/>
+          </svg>
+          <div class="rd-badge-text">
+            <div class="rd-badge-title">ZK PROOF VERIFIED</div>
+            <div class="rd-badge-sub">+34% return · 4.2% max drawdown · strategy-consistent</div>
+          </div>
+        </div>
+      </div>
+      <p class="rd-caption">Private trade data never leaves the agent. What's provable resolves into a
+        cryptographic claim — hover or scroll to see it happen.</p>
     </div>
   </div>
 </section>
 
-<section id="sdk">
+<section id="why-nothing-else" class="reveal">
+  <div class="wrap">
+    <div class="section-label">Why Nothing Else Does This</div>
+    <h2>Every existing approach solves a fragment</h2>
+    <p>Identity standards, leaderboards, transparent ledgers, platform ratings, verifiable
+      inference — each proves something real, and each stops short of the question an
+      allocator actually needs answered.</p>
+
+    <div class="compare-table" role="table">
+      <div class="compare-row compare-head" role="row">
+        <div class="compare-cell" role="columnheader">Approach</div>
+        <div class="compare-cell" role="columnheader">What it proves</div>
+        <div class="compare-cell" role="columnheader">What it cannot answer</div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell compare-approach" role="cell">Identity standards <span class="compare-tag">ERC-8004 et al.</span></div>
+        <div class="compare-cell compare-yes" role="cell">Who an agent is, who it represents</div>
+        <div class="compare-cell compare-no" role="cell">Whether any of its performance claims are true</div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell compare-approach" role="cell">ZK leaderboards <span class="compare-tag">verified rankings</span></div>
+        <div class="compare-cell compare-yes" role="cell">Relative ranking on a scoreboard</div>
+        <div class="compare-cell compare-no" role="cell">Absolute returns, drawdown limits, execution consistency</div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell compare-approach" role="cell">Transparent on-chain records</div>
+        <div class="compare-cell compare-yes" role="cell">Full history, publicly</div>
+        <div class="compare-cell compare-no" role="cell">Nothing privately — full transparency leaks the strategy, so agents with real alpha refuse to use them</div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell compare-approach" role="cell">Platform-internal ratings <span class="compare-tag">per-vault, per-app</span></div>
+        <div class="compare-cell compare-yes" role="cell">Reputation inside one walled garden</div>
+        <div class="compare-cell compare-no" role="cell">Anything portable — the record dies when the agent leaves the platform</div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell compare-approach" role="cell">Verifiable inference <span class="compare-tag">zkML / TEE</span></div>
+        <div class="compare-cell compare-yes" role="cell">That a specific model computation ran</div>
+        <div class="compare-cell compare-no" role="cell">Whether the agent's trading history and results are what it claims — and remains too slow/costly for per-trade use</div>
+      </div>
+    </div>
+
+    <div class="gap-callout">
+      <p>None of them lets an agent prove <em>&ldquo;I returned X%, never exceeded Y% drawdown,
+        and executed exactly the strategy I claimed&rdquo;</em> without revealing a single trade.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sdk" class="reveal">
   <div class="wrap">
     <div class="section-label">SDK</div>
     <h2>Three lines to a verifiable identity</h2>
     <p>The TypeScript SDK wraps the on-chain registry with a viem-based client.
       Register an agent, log receipts, done.</p>
-    <pre><code><span class="tok-kw">import</span> AgentTrust <span class="tok-kw">from</span> <span class="tok-str">'agent-trust-protocol-sdk'</span>;
+    <pre><code><span class="tok-kw">import</span> AgentTrust <span class="tok-kw">from</span>
+  <span class="tok-str">'agent-trust-protocol-sdk'</span>;
 
-<span class="tok-kw">const</span> trust = <span class="tok-kw">new</span> <span class="tok-fn">AgentTrust</span>({ registryAddress: <span class="tok-str">'0x...'</span>, privateKey: process.env.KEY });
+<span class="tok-kw">const</span> trust = <span class="tok-kw">new</span> <span class="tok-fn">AgentTrust</span>({
+  registryAddress: <span class="tok-str">'0x...'</span>,
+  privateKey: process.env.KEY
+});
 
-<span class="tok-kw">const</span> { agentId } = <span class="tok-kw">await</span> trust.<span class="tok-fn">registerAgent</span>({
-  name: <span class="tok-str">'MyTradingBot'</span>,
-  model: <span class="tok-str">'claude-sonnet-4-6'</span>,
-  capabilities: [<span class="tok-str">'defi-trading'</span>],
-});</code></pre>
+<span class="tok-kw">const</span> { agentId } = <span class="tok-kw">await</span>
+  trust.<span class="tok-fn">registerAgent</span>({
+    name: <span class="tok-str">'MyTradingBot'</span>,
+    model: <span class="tok-str">'claude-sonnet-4-6'</span>,
+    capabilities: [<span class="tok-str">'defi-trading'</span>],
+  });</code></pre>
   </div>
 </section>
 
-<section id="status">
+<section id="status" class="reveal">
   <div class="wrap">
-    <div class="section-label">Status</div>
+    <div class="section-label">Where It Stands</div>
     <h2>Unaudited testnet software. Currently:</h2>
     <div class="badge">⚠️ Not audited. Testnet only.</div>
     <ul class="status-list">
@@ -131,7 +232,96 @@
   </div>
 </section>
 
-<section id="links">
+<section id="roadmap" class="reveal">
+  <div class="wrap">
+    <div class="section-label">Roadmap</div>
+    <h2>Shipped, and what's next</h2>
+    <p>Most of the trust and identity layer is already live and open-source. The path
+      ahead is the ZK proving layer, an audit, and a live validator network.</p>
+
+    <div class="timeline">
+      <div class="timeline-item done">
+        <div class="timeline-node" aria-hidden="true">✓</div>
+        <div class="timeline-body">
+          <div class="timeline-title">Open-source release</div>
+          <div class="timeline-sub">Shipped</div>
+        </div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-node" aria-hidden="true">✓</div>
+        <div class="timeline-body">
+          <div class="timeline-title">SDK on npm</div>
+          <div class="timeline-sub">Shipped</div>
+        </div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-node" aria-hidden="true">✓</div>
+        <div class="timeline-body">
+          <div class="timeline-title">Full local deployment + demo</div>
+          <div class="timeline-sub">Shipped</div>
+        </div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-node" aria-hidden="true">✓</div>
+        <div class="timeline-body">
+          <div class="timeline-title">PerformancePassport contract</div>
+          <div class="timeline-sub">Shipped</div>
+        </div>
+      </div>
+      <div class="timeline-item done">
+        <div class="timeline-node" aria-hidden="true">✓</div>
+        <div class="timeline-body">
+          <div class="timeline-title">Noir execution-integrity circuit</div>
+          <div class="timeline-sub">Shipped — proof-of-concept, 5/5 tests</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-node" aria-hidden="true"></div>
+        <div class="timeline-body">
+          <div class="timeline-title">Public testnet deployment</div>
+          <div class="timeline-sub">Upcoming</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-node" aria-hidden="true"></div>
+        <div class="timeline-body">
+          <div class="timeline-title">Remaining ZK circuits</div>
+          <div class="timeline-sub">Risk compliance + profit proof — upcoming</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-node" aria-hidden="true"></div>
+        <div class="timeline-body">
+          <div class="timeline-title">Security audit</div>
+          <div class="timeline-sub">Upcoming</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-node" aria-hidden="true"></div>
+        <div class="timeline-body">
+          <div class="timeline-title">Incentivized validator testnet</div>
+          <div class="timeline-sub">Upcoming</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-node" aria-hidden="true"></div>
+        <div class="timeline-body">
+          <div class="timeline-title">Mainnet</div>
+          <div class="timeline-sub">Upcoming</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-node" aria-hidden="true"></div>
+        <div class="timeline-body">
+          <div class="timeline-title">Token genesis event</div>
+          <div class="timeline-sub">Post-legal-review — upcoming</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="links" class="reveal">
   <div class="wrap">
     <div class="section-label">Links</div>
     <h2>Explore the protocol</h2>
@@ -162,5 +352,6 @@
   </div>
 </footer>
 
+<script src="script.js"></script>
 </body>
 </html>
