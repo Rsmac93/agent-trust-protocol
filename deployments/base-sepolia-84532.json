@@ -27,6 +27,17 @@
     "blockNumber": 44116845,
     "result": "SMOKE TEST PASSED"
   },
-  "verified": false,
-  "note": "First live deployment. BASESCAN_API_KEY was not set at deploy time, so contracts are NOT YET VERIFIED on Basescan — verify separately with `forge verify-contract` once a key is available. PerformancePassport is not part of this deployment (Deploy.s.sol doesn't include it yet; it's deployed ad hoc by demo/ against a local fork only)."
+  "verified": true,
+  "verifiedAt": "2026-07-14T04:36:25Z",
+  "verifiedVia": "forge script --resume --verify (Etherscan V2 API, chainid 84532)",
+  "sourceLinks": {
+    "VoltToken": "https://sepolia.basescan.org/address/0x6a53a18ca136d829ffff3f8eafcf4c108d834e05#code",
+    "TeamVesting": "https://sepolia.basescan.org/address/0x6c3008bcb4767cf11b3b79bb5203a8b678cf7d5f#code",
+    "Staking": "https://sepolia.basescan.org/address/0x3e6c4306a6e25b47206b80e1ee277fe072c1280f#code",
+    "AgentRegistryV2": "https://sepolia.basescan.org/address/0x1d38285211953b61799aaa4ad7221ed638aba751#code",
+    "RewardDistributor": "https://sepolia.basescan.org/address/0xbe3937e04b0605681942480f9fdd61d102f7a5dd#code",
+    "Emission": "https://sepolia.basescan.org/address/0xe5342dbd7ec3ba82e107c3090ddad9328e7b5fc3#code",
+    "DisputeModule": "https://sepolia.basescan.org/address/0x99ef4dd96fccddb1a7659edd9816bd75f3aa253a#code"
+  },
+  "note": "All 7 contracts verified on Basescan 2026-07-14 (Etherscan V2 unified API — see foundry.toml's [etherscan] section; the old per-chain Basescan V1 endpoint is deprecated). PerformancePassport is not part of this deployment (Deploy.s.sol doesn't include it yet; it's deployed ad hoc by demo/ against a local fork only)."
 }

@@ -21,5 +21,7 @@ line_length = 100
 base_sepolia = "${BASE_SEPOLIA_RPC_URL}"
 
 [etherscan]
-# Basescan (Etherscan v2). chainid 84532 = Base Sepolia.
-base_sepolia = { key = "${BASESCAN_API_KEY}", chain = 84532, url = "https://api-sepolia.basescan.org/api" }
+# Etherscan V2 unified API (single key works across all supported chains,
+# routed by chainid). chainid 84532 = Base Sepolia. The old per-chain
+# Basescan V1 endpoint (api-sepolia.basescan.org) is deprecated.
+base_sepolia = { key = "${BASESCAN_API_KEY}", chain = 84532, url = "https://api.etherscan.io/v2/api?chainid=84532" }

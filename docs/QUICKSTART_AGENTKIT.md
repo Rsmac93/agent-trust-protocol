@@ -3,15 +3,13 @@
 5 minutes, from install to seeing your first receipt on-chain.
 
 > **Current status:** `AgentRegistryV2` and the rest of the protocol are
-> **live on Base Sepolia** (chainId 84532) — see
+> **live and verified on Base Sepolia** (chainId 84532) — see
 > [deployments/base-sepolia-84532.json](../deployments/base-sepolia-84532.json)
-> for addresses and a passing smoke-test record. `voltpass-sdk` and
-> `voltpass-agentkit` are built and tested but **not yet published to
-> npm** (publish is pending review — see [SECURITY.md](../SECURITY.md),
-> this is pre-audit testnet software). The `npm install` command below is
-> the intended end-state UX; until it's live, use the **local install**
-> variant in Step 1 — everything else in this guide runs against the real
-> testnet deployment exactly as written.
+> for addresses, verified-source links, and a passing smoke-test record.
+> `voltpass-sdk@0.1.1` and `voltpass-agentkit@0.1.0` are published to npm
+> — the `npm install` command below works as written. This is still
+> **pre-audit testnet software** — see [SECURITY.md](../SECURITY.md)
+> before using any of this with real funds.
 
 ## What you're about to do
 
@@ -28,24 +26,12 @@ build on top of this into portable, third-party-checkable reputation.
 
 ## Step 1 — install
 
-Once published:
-
 ```bash
 npm install voltpass-agentkit @coinbase/agentkit viem
 ```
 
-**Today (local install, not yet on npm):**
-
-```bash
-git clone https://github.com/Rsmac93/agent-trust-protocol.git voltpass
-cd voltpass/sdk && npm install && npm run build
-cd ../agentkit-adapter && npm install && npm run build
-```
-
-`voltpass-agentkit` depends on `voltpass-sdk` via a local `file:` reference,
-so building the SDK first is required — this is purely an artifact of the
-pre-publish state, not something you'll need to think about once both
-packages are live on npm.
+`voltpass-agentkit` depends on `voltpass-sdk`, published separately —
+npm resolves it automatically, no extra install step needed.
 
 ## Step 2 — point at the live contracts
 
@@ -148,12 +134,11 @@ console.log('self-reported receipts:', info.selfReceipts); // was N, now N+1
 Or skip the SDK read entirely and look at it directly: open
 `https://sepolia.basescan.org/address/{yourWalletAddress}` in a browser —
 the `logReceipt` transaction the adapter fired is right there, from your
-wallet, with no manual step on your part. (Contract source isn't verified
-on Basescan yet — see the note in
-[deployments/base-sepolia-84532.json](../deployments/base-sepolia-84532.json) —
-so the transaction will show as a raw contract call rather than a
-decoded function name until verification lands; the on-chain state itself
-is real either way.)
+wallet, with no manual step on your part. Contract source is verified on
+Basescan (see
+[deployments/base-sepolia-84532.json](../deployments/base-sepolia-84532.json)
+for direct links to each contract's verified source), so the transaction
+decodes as `logReceipt(uint256,bytes32)` — not a raw, unlabeled call.
 
 That receipt is now a permanent, hash-committed record on
 `AgentRegistryV2` — the same one a validator can later attest, and the
