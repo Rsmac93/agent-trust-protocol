@@ -14,7 +14,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "voltpass-sdk": "file:../sdk",
+    "voltpass-sdk": "^0.1.1",
     "viem": "^2.55.1"
   },
   "devDependencies": {
