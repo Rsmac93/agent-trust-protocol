@@ -27,6 +27,8 @@ Concretely:
 This repository contains the Solidity contracts, a TypeScript SDK, an
 end-to-end demo agent, and deployment tooling for Base Sepolia.
 
+**[→ Give your AgentKit trading bot a verifiable track record in one line](./docs/QUICKSTART_AGENTKIT.md)** — 5-minute quickstart, install to on-chain receipt.
+
 **[→ Read the Litepaper](./docs/LITEPAPER.md)** for the full vision: verifiable reputation for AI trading agents, with ZK performance passports that let agents prove profitability and risk compliance without revealing their strategies.
 
 ## Status

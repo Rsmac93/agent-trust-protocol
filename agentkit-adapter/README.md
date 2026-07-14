@@ -6,7 +6,9 @@ developer's existing trading logic or ActionProviders.
 
 Pinned against `@coinbase/agentkit@0.10.4`. See
 [`docs/integrations/agentkit-adapter.md`](../docs/integrations/agentkit-adapter.md)
-in the repo root for the full design rationale.
+in the repo root for the full design rationale, or
+[`docs/QUICKSTART_AGENTKIT.md`](../docs/QUICKSTART_AGENTKIT.md) for a
+5-minute install-to-first-receipt walkthrough.
 
 ## Integration (the entire diff)
 
