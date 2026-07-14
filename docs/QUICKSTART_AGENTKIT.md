@@ -2,13 +2,16 @@
 
 5 minutes, from install to seeing your first receipt on-chain.
 
-> **Current status:** `voltpass-sdk` and `voltpass-agentkit` are built,
-> tested, and not yet published to npm (publish is pending review — see
-> [SECURITY.md](../SECURITY.md), this is pre-audit testnet software). The
-> `npm install` commands below are the intended end-state UX and are what
-> you'll run once they're live. Until then, use the **local install**
-> variant in Step 1 — everything else in this guide works today, against a
-> local Anvil chain, exactly as written.
+> **Current status:** `AgentRegistryV2` and the rest of the protocol are
+> **live on Base Sepolia** (chainId 84532) — see
+> [deployments/base-sepolia-84532.json](../deployments/base-sepolia-84532.json)
+> for addresses and a passing smoke-test record. `voltpass-sdk` and
+> `voltpass-agentkit` are built and tested but **not yet published to
+> npm** (publish is pending review — see [SECURITY.md](../SECURITY.md),
+> this is pre-audit testnet software). The `npm install` command below is
+> the intended end-state UX; until it's live, use the **local install**
+> variant in Step 1 — everything else in this guide runs against the real
+> testnet deployment exactly as written.
 
 ## What you're about to do
 
@@ -44,43 +47,43 @@ so building the SDK first is required — this is purely an artifact of the
 pre-publish state, not something you'll need to think about once both
 packages are live on npm.
 
-## Step 2 — get a chain to point at
+## Step 2 — point at the live contracts
 
-You need a deployed `AgentRegistryV2` to register against. There's no live
-testnet deployment yet (see [DEPLOYMENT.md](../DEPLOYMENT.md) for why —
-faucet access is the current blocker), so for this quickstart, deploy
-everything locally on Anvil — takes under a minute:
+No deployment needed — `AgentRegistryV2` is already live on Base Sepolia.
+The SDK ships the address:
 
-```bash
-# from the repo root, in one shell:
-anvil --chain-id 84532 --port 8545
+```ts
+import { BASE_SEPOLIA_DEPLOYMENT } from 'voltpass-sdk';
+
+console.log(BASE_SEPOLIA_DEPLOYMENT.AgentRegistryV2);
+// 0x1d38285211953b61799AAA4Ad7221ED638AbA751
 ```
 
-```bash
-# in another shell:
-cp .env.example .env
-# edit .env: set PRIVATE_KEY to one of the funded accounts Anvil printed on startup
+You'll need a Base Sepolia wallet with a small amount of testnet ETH (the
+registration fee, plus gas — well under a cent's worth of testnet ETH
+total). Get some free from the
+[Coinbase Developer Platform faucet](https://portal.cdp.coinbase.com/products/faucet)
+or [Alchemy's Base Sepolia faucet](https://www.alchemy.com/faucets/base-sepolia).
 
-source .env
-forge script script/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
-```
-
-Grab the `AgentRegistryV2` address from the script's output (or from
-[deployments/anvil-fork-84532.json](../deployments/anvil-fork-84532.json)
-if you're reusing that fork) — you'll need it in the next step.
+> **Developing offline?** Skip straight to
+> [Appendix — local Anvil alternative](#appendix--local-anvil-alternative)
+> below to run this whole flow against a local chain instead, no testnet
+> ETH or network round-trips required.
 
 ## Step 3 — register your agent and get an `agentId`
 
 One-time setup, not something you run on every startup:
 
 ```ts
-import { registerAgentOnce } from 'voltpass-agentkit';
+import { registerAgentOnce, } from 'voltpass-agentkit';
+import { BASE_SEPOLIA_DEPLOYMENT } from 'voltpass-sdk';
 
 const agentId = await registerAgentOnce({
-  registryAddress: '0x...',              // from Step 2
+  registryAddress: BASE_SEPOLIA_DEPLOYMENT.AgentRegistryV2,
   privateKey: process.env.VOLTPASS_LOGGER_KEY as `0x${string}`,
   name: 'my-trading-agent',
   model: 'claude-sonnet-5',
+  network: 'baseSepolia',
 });
 
 console.log('agentId:', agentId);        // save this — you'll pass it into Step 4
@@ -98,13 +101,15 @@ to `AgentKit.from(...)`:
 import { AgentKit } from '@coinbase/agentkit';
 import { ViemWalletProvider } from '@coinbase/agentkit';
 import { withVoltPassLogging } from 'voltpass-agentkit';
+import { BASE_SEPOLIA_DEPLOYMENT } from 'voltpass-sdk';
 
 const walletProvider = withVoltPassLogging(
   new ViemWalletProvider(walletClient),   // your existing wallet client, untouched
   {
-    registryAddress: '0x...',             // from Step 2
+    registryAddress: BASE_SEPOLIA_DEPLOYMENT.AgentRegistryV2,
     agentId: 4217n,                       // from Step 3
     loggerPrivateKey: process.env.VOLTPASS_LOGGER_KEY as `0x${string}`,
+    network: 'baseSepolia',
   },
 );
 
@@ -129,13 +134,26 @@ await walletProvider.nativeTransfer('0x000000000000000000000000000000000000dEaD'
 Then, a moment later, check the agent's receipt count went up by one:
 
 ```ts
-import { VoltPass } from 'voltpass-sdk';
+import { VoltPass, BASE_SEPOLIA_DEPLOYMENT } from 'voltpass-sdk';
 
-const voltpass = new VoltPass({ registryAddress: '0x...' }); // read-only, no key needed
+const voltpass = new VoltPass({
+  registryAddress: BASE_SEPOLIA_DEPLOYMENT.AgentRegistryV2,
+  network: 'baseSepolia',
+}); // read-only, no key needed
 const info = await voltpass.getAgent(agentId);
 
 console.log('self-reported receipts:', info.selfReceipts); // was N, now N+1
 ```
+
+Or skip the SDK read entirely and look at it directly: open
+`https://sepolia.basescan.org/address/{yourWalletAddress}` in a browser —
+the `logReceipt` transaction the adapter fired is right there, from your
+wallet, with no manual step on your part. (Contract source isn't verified
+on Basescan yet — see the note in
+[deployments/base-sepolia-84532.json](../deployments/base-sepolia-84532.json) —
+so the transaction will show as a raw contract call rather than a
+decoded function name until verification lands; the on-chain state itself
+is real either way.)
 
 That receipt is now a permanent, hash-committed record on
 `AgentRegistryV2` — the same one a validator can later attest, and the
@@ -168,3 +186,31 @@ agent. You didn't write a single line of receipt-logging code to get it.
 - [docs/LITEPAPER.md](./LITEPAPER.md) — the full vision, including ZK
   performance passports for proving profitability without revealing
   strategy.
+
+## Appendix — local Anvil alternative
+
+For offline development, or if you'd rather not touch testnet ETH at all:
+deploy the whole protocol to a local Anvil chain in under a minute, and
+run every step above against that instead — same code, just a different
+`registryAddress` and RPC.
+
+```bash
+# from the repo root, in one shell:
+anvil --chain-id 84532 --port 8545
+```
+
+```bash
+# in another shell:
+cp .env.example .env
+# edit .env: set PRIVATE_KEY to one of the funded accounts Anvil printed on startup
+
+source .env
+forge script script/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
+```
+
+Grab the `AgentRegistryV2` address from the script's output (or from
+[deployments/anvil-fork-84532.json](../deployments/anvil-fork-84532.json)
+if you're reusing that fork). Pass it as `registryAddress` and pass
+`rpcUrl: 'http://127.0.0.1:8545'` everywhere Steps 2–5 above use
+`BASE_SEPOLIA_DEPLOYMENT.AgentRegistryV2` / `network: 'baseSepolia'` —
+everything else is identical.

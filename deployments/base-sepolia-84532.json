@@ -1,0 +1,32 @@
+{
+  "network": "Base Sepolia (live testnet, chainId 84532)",
+  "rpc": "https://sepolia.base.org",
+  "deployedAt": "2026-07-14T04:45:58Z",
+  "deployer": "0xFCc7B8Ec8ce431c85a91Fe83d8b0B2a54Faeb710",
+  "VoltToken": "0x6A53a18Ca136D829ffFF3f8eAFCF4c108D834E05",
+  "TeamVesting": "0x6c3008bCb4767CF11B3B79bb5203A8B678cf7d5F",
+  "Staking": "0x3E6c4306A6E25B47206b80E1ee277FE072c1280F",
+  "AgentRegistryV2": "0x1d38285211953b61799AAA4Ad7221ED638AbA751",
+  "RewardDistributor": "0xbe3937E04B0605681942480f9FdD61d102F7A5dd",
+  "Emission": "0xe5342dbd7EC3ba82E107c3090ddad9328e7B5Fc3",
+  "DisputeModule": "0x99eF4DD96fcCddb1A7659EdD9816Bd75F3AA253A",
+  "deployTx": {
+    "TeamVesting": "0x7f3e1b1b122b117e0e09f4d56dfbb5a1ee56daae0966151ecd8ad336891de6a7",
+    "VoltToken": "0x6b07eb90788c1f21ab59d060b23ef0d9c87bf6a4216c9827054bd009f19fed92",
+    "Staking": "0x1325a9a5476677de65a5b40a7a1105e84c843493f59ab8b6af258408599e8dfb",
+    "AgentRegistryV2": "0x59cf24dd5f42caed213b3b7103c57bc1648e5bbd8fc418854e862d2cca8d5068",
+    "RewardDistributor": "0xcc58a684f0d090dfccc9eadeed51522ca7180b5378966ad0dc1fe2e76d73b745",
+    "Emission": "0x18ea8b70a2c7c84054de491df4a637eaa3d889f7781134918e50434c66b3294e",
+    "DisputeModule": "0x15484722b00897cdd86d2405964be49dfc650cf44b6dc468c1b1d39291e640b1"
+  },
+  "smokeTest": {
+    "agentId": 1,
+    "principal": "0xFCc7B8Ec8ce431c85a91Fe83d8b0B2a54Faeb710",
+    "registerAgentTx": "0x5c4e3081dffbc6c60bf3965d35f315eee13e1d9775c9da18733cf4fb47248d10",
+    "logReceiptTx": "0x2174367cbbc48372175c7f48f04193dc4ba833606eb9565db2dc29115764057d",
+    "blockNumber": 44116845,
+    "result": "SMOKE TEST PASSED"
+  },
+  "verified": false,
+  "note": "First live deployment. BASESCAN_API_KEY was not set at deploy time, so contracts are NOT YET VERIFIED on Basescan — verify separately with `forge verify-contract` once a key is available. PerformancePassport is not part of this deployment (Deploy.s.sol doesn't include it yet; it's deployed ad hoc by demo/ against a local fork only)."
+}

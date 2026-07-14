@@ -38,6 +38,25 @@ export interface AgentInfo {
 
 const CHAINS: Record<string, Chain> = { base, baseSepolia };
 
+/** VoltPass's live Base Sepolia deployment (chainId 84532), deployed
+ *  2026-07-14. Not verified on Basescan yet (verify separately once a
+ *  BASESCAN_API_KEY is available — this constant is accurate regardless).
+ *  `PerformancePassport` is not part of this deployment. See
+ *  `deployments/base-sepolia-84532.json` in the repo for tx hashes and the
+ *  smoke-test record. Pass `BASE_SEPOLIA_DEPLOYMENT.AgentRegistryV2` as
+ *  `registryAddress` to skip hunting for the address yourself. */
+export const BASE_SEPOLIA_DEPLOYMENT = {
+  network: 'baseSepolia',
+  chainId: 84532,
+  VoltToken: '0x6A53a18Ca136D829ffFF3f8eAFCF4c108D834E05',
+  TeamVesting: '0x6c3008bCb4767CF11B3B79bb5203A8B678cf7d5F',
+  Staking: '0x3E6c4306A6E25B47206b80E1ee277FE072c1280F',
+  AgentRegistryV2: '0x1d38285211953b61799AAA4Ad7221ED638AbA751',
+  RewardDistributor: '0xbe3937E04B0605681942480f9FdD61d102F7A5dd',
+  Emission: '0xe5342dbd7EC3ba82E107c3090ddad9328e7B5Fc3',
+  DisputeModule: '0x99eF4DD96fcCddb1A7659EdD9816Bd75F3AA253A',
+} as const satisfies Record<string, Address | string | number>;
+
 /** PerformancePassport claim types (must match PerformancePassport.ClaimType). */
 export type ClaimTypeName = 'PROFIT' | 'RISK_COMPLIANCE' | 'EXECUTION_INTEGRITY';
 const CLAIM_TYPE_CODE: Record<ClaimTypeName, number> = {

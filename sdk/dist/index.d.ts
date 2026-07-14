@@ -26,6 +26,24 @@ export interface AgentInfo {
     disputes: number;
     reputation: bigint;
 }
+/** VoltPass's live Base Sepolia deployment (chainId 84532), deployed
+ *  2026-07-14. Not verified on Basescan yet (verify separately once a
+ *  BASESCAN_API_KEY is available — this constant is accurate regardless).
+ *  `PerformancePassport` is not part of this deployment. See
+ *  `deployments/base-sepolia-84532.json` in the repo for tx hashes and the
+ *  smoke-test record. Pass `BASE_SEPOLIA_DEPLOYMENT.AgentRegistryV2` as
+ *  `registryAddress` to skip hunting for the address yourself. */
+export declare const BASE_SEPOLIA_DEPLOYMENT: {
+    readonly network: "baseSepolia";
+    readonly chainId: 84532;
+    readonly VoltToken: "0x6A53a18Ca136D829ffFF3f8eAFCF4c108D834E05";
+    readonly TeamVesting: "0x6c3008bCb4767CF11B3B79bb5203A8B678cf7d5F";
+    readonly Staking: "0x3E6c4306A6E25B47206b80E1ee277FE072c1280F";
+    readonly AgentRegistryV2: "0x1d38285211953b61799AAA4Ad7221ED638AbA751";
+    readonly RewardDistributor: "0xbe3937E04B0605681942480f9FdD61d102F7A5dd";
+    readonly Emission: "0xe5342dbd7EC3ba82E107c3090ddad9328e7B5Fc3";
+    readonly DisputeModule: "0x99eF4DD96fcCddb1A7659EdD9816Bd75F3AA253A";
+};
 /** PerformancePassport claim types (must match PerformancePassport.ClaimType). */
 export type ClaimTypeName = 'PROFIT' | 'RISK_COMPLIANCE' | 'EXECUTION_INTEGRITY';
 export interface Claim {
